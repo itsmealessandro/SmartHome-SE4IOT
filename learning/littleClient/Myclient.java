@@ -31,7 +31,16 @@ public class Myclient {
 
       mqttClient.connect(options);
 
-      // createAndPublishMessage();
+      for (int i = 0; i < 10; i++) {
+        try {
+
+          Thread.sleep(2000);
+        } catch (Exception e) {
+          // TODO: handle exception
+        }
+        createAndPublishMessage(mqttClient);
+        System.out.println(i + ":----------------------------");
+      }
 
       // subscribe();
 
@@ -42,26 +51,25 @@ public class Myclient {
     }
   }
 
+  static void createAndPublishMessage(MqttClient mqttClient) {
+    // Message creation
+    MqttMessage message = new MqttMessage("my message".getBytes());
+    message.setRetained(true);
+    message.setQos(2);
+
+    // Topic creation
+    MqttTopic topic = mqttClient.getTopic("z");
+
+    try {
+      MqttDeliveryToken deliveryToken = topic.publish(message);
+    } catch (MqttException e) {
+      e.printStackTrace();
+      System.out.println("Mqtt exception on delivery");
+      System.exit(1);
+    }
+
+  }
   /*
-   * void createAndPublishMessage() {
-   * // Message creation
-   * MqttMessage message = new MqttMessage("my message".getBytes());
-   * message.setRetained(true);
-   * message.setQos(2);
-   * 
-   * // Topic creation
-   * MqttTopic topic = mqttClient.getTopic("x");
-   * 
-   * try {
-   * MqttDeliveryToken deliveryToken = topic.publish(message);
-   * } catch (MqttException e) {
-   * e.printStackTrace();
-   * System.out.println("Mqtt exception on delivery");
-   * System.exit(1);
-   * }
-   * 
-   * }
-   * 
    * void subscribe() {
    * 
    * try {
