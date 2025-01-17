@@ -21,7 +21,7 @@ CMD ["./mqttsetup.sh"]
 ```
 By running:
 ```bash
-sudo docker build -t mqttExample -f Dockerfile .
+sudo docker build -t mqttexample -f Dockerfile .
 ```
 We begin the building process.
 > [!WARNING]
@@ -43,7 +43,7 @@ Downloads all the necessary to run the scripts and the broker:
 COPY ./littleClient/ /
 COPY ./mqttsetup.sh /
 ```
-From the directory we are in it copies the java mqttExample and the shell script that will execute everything on running
+From the directory we are in it copies the java mqttexample and the shell script that will execute everything on running
 
 4) Permission: 
 ```docker
@@ -59,7 +59,7 @@ The script contains the mosquitto startup and the java code execution
 
 After the build phase is over and the image is produced we can run it.
 ```bash
-sudo docker run mqttExample
+sudo docker run mqttexample
 ```
 This will run the docker image in a container
 
