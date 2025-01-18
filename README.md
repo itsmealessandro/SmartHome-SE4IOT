@@ -82,6 +82,3 @@ The system leverages modern technologies to ensure flexibility, scalability, and
 3. Monitor real-time data through Grafana.
 4. Receive notifications for configured threshold violations.
 
-## Contributions
-
-Contributions are welcome! Please open an issue or submit a pull request to suggest improvements or add features.
