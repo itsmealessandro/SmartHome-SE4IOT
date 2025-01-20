@@ -6,6 +6,7 @@ public class Sensor {
     private String deviceId;
     private MqttClientWrapper mqttClient;
 
+    // Costruttore
     public Sensor(String id, String type, String unit, String deviceId, MqttClientWrapper mqttClient) {
         this.id = id;
         this.type = type;
@@ -19,14 +20,12 @@ public class Sensor {
         return value;
     }
 
-    // Metodo per aggiornare il valore del sensore (simulando una lettura dal sensore)
+    // Metodo per aggiornare il valore del sensore (simulando una lettura)
     public void updateValue() {
-        // Simuliamo un valore casuale per il sensore
-        // Questo valore sarà sostituito da una lettura reale in un'applicazione reale
         if (this.type.equals("temperature")) {
-            this.value = 20 + Math.random() * 5; // temperatura tra 20 e 25 °C
+            this.value = 20 + Math.random() * 5; // Simula una temperatura tra 20 e 25 °C
         } else if (this.type.equals("humidity")) {
-            this.value = 40 + Math.random() * 20; // umidità tra 40% e 60%
+            this.value = 40 + Math.random() * 20; // Simula un'umidità tra 40% e 60%
         }
     }
 
@@ -36,7 +35,7 @@ public class Sensor {
         mqttClient.publish(topic, String.valueOf(value));
     }
 
-    // Metodo per pubblicare l'unità di misura del sensore su MQTT
+    // Metodo per pubblicare l'unità di misura su MQTT
     public void publishUnit() {
         String topic = "homie/" + deviceId + "/" + id + "/unit";
         mqttClient.publish(topic, unit);
@@ -48,11 +47,11 @@ public class Sensor {
         mqttClient.publish(topic, type.substring(0, 1).toUpperCase() + type.substring(1));
     }
 
-    // Metodo per pubblicare tutte le informazioni del sensore (valore, unità, nome)
+    // Metodo per pubblicare tutte le informazioni del sensore
     public void publishAll() {
-        updateValue();  // Aggiorniamo il valore del sensore
-        publishValue(); // Pubbliciamo il valore
-        publishUnit();  // Pubbliciamo l'unità di misura
-        publishName();  // Pubbliciamo il nome del sensore
+        updateValue(); // Aggiorna il valore del sensore
+        publishValue(); // Pubblica il valore
+        publishUnit();  // Pubblica l'unità di misura
+        publishName();  // Pubblica il nome del sensore
     }
 }
