@@ -11,7 +11,7 @@ public class MqttPublishSample {
     String topic = "topicExample";
     String content = "Message from MqttPublishSample";
     int qos = 2;
-    String broker = "tcp://localhost:1883"; // funziona solo in locale, con docker no
+    String broker = "tcp://broker-mosquitto:1883"; // funziona solo in locale, con docker no
     String clientId = "JavaSample";
     MemoryPersistence persistence = new MemoryPersistence();
 
