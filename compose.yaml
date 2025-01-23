@@ -1,0 +1,38 @@
+services:
+  broker:
+    image: eclipse-mosquitto  
+    ports:
+      - "1883:1883"
+    networks:
+          - nodered-mosquitto
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./log:/mosquitto/log
+    restart: unless-stopped
+
+  nodered:
+    build: ./nodered/
+    ports:
+      - "1880:1880"
+    networks:
+          - nodered-mosquitto
+    volumes:
+          - shared-data:/data
+
+  sensors:
+    build: ./sensors/
+    networks:
+          - mqtt-network
+
+  actuators:
+    build: ./actuators/
+    networks:
+          - mqtt-network
+
+volumes:
+  shared-data:
+  config:
+
+networks:
+  mqtt-network:
+    driver: bridge
