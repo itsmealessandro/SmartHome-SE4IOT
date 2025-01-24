@@ -4,23 +4,32 @@ services:
   # --------------------------------------------
   # mosquitto will be the MQTT broker
   broker:
+    container_name: mosquitto-container
     hostname: mosquittoName
     image: eclipse-mosquitto
     ports:
       - "1883:1883"
     networks:
           - net-test
+    volumes:
+          - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+          - ./log:/mosquitto/log
 
   # --------------------------------------------
   # NODERED -----------------------------------
   # --------------------------------------------
   nodered:
-    build: ./nodered/
+    #build: ./nodered/
+    container_name: nodered-container
+    image: nodered/node-red:latest
     hostname: nodeName
     ports:
       - "1880:1880"
     networks:
           - net-test
+    volumes:
+      - data:/data
+      - ./flows.json:/data/flows.json
 
 
   # --------------------------------------------
@@ -45,6 +54,11 @@ services:
 #    networks:
 #          - net-test
 
+volumes:
+  data:
+  conf:
+  logs:
 
 networks:
   net-test:
+    driver: bridge  

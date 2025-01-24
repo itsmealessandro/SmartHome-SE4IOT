@@ -1,0 +1,39 @@
+[
+    {
+        "id": "inject-node",
+        "type": "inject",
+        "z": "flow",
+        "name": "Simple Inject",
+        "props": [{"p": "payload"}],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "topic": "",
+        "payload": "Hello, Node-RED!",
+        "payloadType": "str",
+        "x": 150,
+        "y": 100,
+        "wires": [["debug-node"]]
+    },
+    {
+        "id": "debug-node",
+        "type": "debug",
+        "z": "flow",
+        "name": "Debug Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 350,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "flow",
+        "type": "tab",
+        "label": "Simple Flow",
+        "disabled": false,
+        "info": ""
+    }
+]
