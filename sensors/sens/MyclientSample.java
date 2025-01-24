@@ -8,11 +8,11 @@ public class MqttPublishSample {
 
   public static void main(String[] args) {
 
-    String topic = "SmartHome/livingRoom/1";
-    String content = "sensor 1 data";
+    String topic = "testTopic";
+    String content = "test content";
     int qos = 0;
     String broker = "tcp://broker:1883";
-    String clientId = "1";
+    String clientId = "testId";
     MemoryPersistence persistence = new MemoryPersistence();
 
     try {

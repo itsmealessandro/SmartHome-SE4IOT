@@ -12,14 +12,12 @@ services:
     networks:
           - net-test
     volumes:
-          - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-          - ./log:/mosquitto/log
+          - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   # --------------------------------------------
   # NODERED -----------------------------------
   # --------------------------------------------
   nodered:
-    #build: ./nodered/
     container_name: nodered-container
     image: nodered/node-red:latest
     hostname: nodeName
@@ -28,8 +26,9 @@ services:
     networks:
           - net-test
     volumes:
-      - data:/data
-      - ./flows.json:/data/flows.json
+      - ./nodered:/data
+    depends_on:
+      - broker
 
 
   # --------------------------------------------
@@ -40,7 +39,11 @@ services:
      hostname: sensorsName
      networks:
            - net-test
-  # reconfiguration idea:
+     depends_on:
+      - broker
+      - nodered
+
+      # NOTE: reconfiguration idea:
       # 1) turn off the system
       # 2) Wirte the new java class for the sensors
       # 3) add it to the script that runs the sensors
@@ -55,9 +58,8 @@ services:
 #          - net-test
 
 volumes:
-  data:
-  conf:
-  logs:
+  nodered:
+  mosquitto:
 
 networks:
   net-test:
