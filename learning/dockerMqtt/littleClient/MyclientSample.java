@@ -8,12 +8,20 @@ public class MqttPublishSample {
 
   public static void main(String[] args) {
 
-    String topic = "topicExample";
+    String topic = "SmartHome/sensors/livingRoom";
     String content = "Message from MqttPublishSample";
     int qos = 2;
     String broker = "tcp://test.mosquitto.org:1883";
-    String clientId = "JavaSample";
+    String clientId = "sensor1";
     MemoryPersistence persistence = new MemoryPersistence();
+
+    /* JSON
+     * Sensors1{
+     * id=1
+     * value:x
+     * }
+     * 
+     */
 
     try {
       MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
