@@ -117,7 +117,7 @@
         "method": "POST",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "https://api.telegram.org/bot8170899441:AAGim2S_DnqFwvYmfOiaSzXKt23D4dQuq1c/sendMessage",
+        "url": "https://api.telegram.org/bot<tokenHide>/sendMessage",
         "tls": "",
         "persist": false,
         "proxy": "",
