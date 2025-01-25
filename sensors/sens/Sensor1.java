@@ -10,16 +10,16 @@ public class Sensor1 {
 
     String topic = "SmartHome/livingRoom/1";
     String content = "sensor 1 data";
-    int qos = 0;
+    int qos = 1;
     String broker = "tcp://broker:1883";
     String clientId = "1";
     MemoryPersistence persistence = new MemoryPersistence();
 
     try {
-      Thread.sleep(5000);
+      Thread.sleep(2000);
 
-      for (int i = 0; i < 5; i++) {
-        Thread.sleep(1000);
+      for (int i = 0; i < 100; i++) {
+        Thread.sleep(500);
         MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);

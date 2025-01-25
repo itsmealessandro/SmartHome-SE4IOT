@@ -10,16 +10,16 @@ public class MqttPublishSample {
 
     String topic = "testTopic";
     String content = "test content";
-    int qos = 0;
+    int qos = 1;
     String broker = "tcp://broker:1883";
     String clientId = "testId";
     MemoryPersistence persistence = new MemoryPersistence();
 
     try {
-      Thread.sleep(5000);
+      Thread.sleep(2000);
 
-      for (int i = 0; i < 5; i++) {
-        Thread.sleep(1000);
+      for (int i = 0; i < 1000; i++) {
+        Thread.sleep(500);
         MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
