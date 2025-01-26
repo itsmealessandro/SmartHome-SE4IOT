@@ -46,6 +46,7 @@ services:
       - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
     environment:
       - INFLUXDB_HTTP_AUTH_ENABLED=true
+      - INFLUX_TOKEN=VYgbQWXlR51eaJkJTv-UujGEKyFmWavBHljSdQ7z8i-a1TCZ5l_FMyjOmOnoCnfwSbaDFvGyFcU3sSr0t_lupDQ==
     depends_on:
       - broker
 
