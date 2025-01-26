@@ -1,8 +1,7 @@
 services:
   # --------------------------------------------
-  # MOSQUITO -----------------------------------
+  # MOSQUITTO -----------------------------------
   # --------------------------------------------
-  # mosquitto will be the MQTT broker
   broker:
     container_name: mosquitto-container
     hostname: mosquittoName
@@ -10,9 +9,9 @@ services:
     ports:
       - "1883:1883"
     networks:
-          - net-test
+      - net-test
     volumes:
-          - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   # --------------------------------------------
   # NODERED -----------------------------------
@@ -24,43 +23,49 @@ services:
     ports:
       - "1880:1880"
     networks:
-          - net-test
+      - net-test
     volumes:
       - ./nodered:/data
     depends_on:
       - broker
 
+  # --------------------------------------------
+  # INFLUXDB -----------------------------------
+  # --------------------------------------------
+  influxdb:
+    container_name: influxdb-container
+    build:
+      context: ./influxdb
+    hostname: influxdbName
+    ports:
+      - "8086:8086"
+    networks:
+      - net-test
+    volumes:
+      - ./influxdb:/var/lib/influxdb
+      - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+    environment:
+      - INFLUXDB_HTTP_AUTH_ENABLED=true
+    depends_on:
+      - broker
 
   # --------------------------------------------
   # SENSORS -----------------------------------
   # --------------------------------------------
   sensors:
-     build: ./sensors/
-     hostname: sensorsName
-     networks:
-           - net-test
-     depends_on:
+    build: ./sensors/
+    hostname: sensorsName
+    networks:
+      - net-test
+    depends_on:
       - broker
       - nodered
 
-      # NOTE: reconfiguration idea:
-      # 1) turn off the system
-      # 2) Wirte the new java class for the sensors
-      # 3) add it to the script that runs the sensors
-      # 4) docker compose up the system
-
-  # --------------------------------------------
-  # ACTUATORS -----------------------------------
-  # --------------------------------------------
-#  actuators:
-#    build: ./actuators/
-#    networks:
-#          - net-test
+networks:
+  net-test:
+    driver: bridge
 
 volumes:
   nodered:
   mosquitto:
-
-networks:
-  net-test:
-    driver: bridge  
+  influxdb:
