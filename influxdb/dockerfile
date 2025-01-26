@@ -1,0 +1,8 @@
+FROM influxdb:latest
+
+# Copia lo script di inizializzazione e il file di configurazione nella directory del container
+COPY influxdb.conf /etc/influxdb/influxdb.conf
+COPY setup_influx.sh /docker-entrypoint-initdb.d/setup_influx.sh
+
+# Garantisce che lo script abbia i permessi di esecuzione
+RUN chmod +x /docker-entrypoint-initdb.d/setup_influx.sh

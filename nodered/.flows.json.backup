@@ -33,6 +33,21 @@
         "sessionExpiry": ""
     },
     {
+        "id": "7e2934393ac03b0c",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "univaq",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://influxdb-container:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
         "id": "mqttInNode",
         "type": "mqtt in",
         "z": "76e4921e87a05a32",
@@ -87,7 +102,8 @@
         "y": 280,
         "wires": [
             [
-                "93eb87103951960d"
+                "93eb87103951960d",
+                "8dc0b6249cd06292"
             ]
         ]
     },
@@ -116,7 +132,7 @@
         "method": "POST",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "https://api.telegram.org/bot8170899441:AAGim2S_DnqFwvYmfOiaSzXKt23D4dQuq1c/sendMessage",
+        "url": "https://api.telegram.org/bot<tokenHide>/sendMessage",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -171,7 +187,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "function 1",
-        "func": "msg.method = \"POST\";\nmsg.url = \"https://api.telegram.org/bot8170899441:AAGim2S_DnqFwvYmfOiaSzXKt23D4dQuq1c/sendMessage\";\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text: \"Hello, from nodered!\"  // Messaggio da inviare\n};\nreturn msg;\n",
+        "func": "msg.method = \"POST\";\nmsg.url = \"https://api.telegram.org/bot<hideToken>/sendMessage\";\nmsg.payload = {\n    chat_id: \"<hideChatId>\", // ID del gruppo\n    text: \"Hello, from nodered!\"  // Messaggio da inviare\n};\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -185,5 +201,89 @@
                 "ddb1cba5cc2fcff1"
             ]
         ]
+    },
+    {
+        "id": "26ddd0e43536d9b4",
+        "type": "inject",
+        "z": "76e4921e87a05a32",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 220,
+        "y": 100,
+        "wires": [
+            [
+                "83e7dbbe33056d07"
+            ]
+        ]
+    },
+    {
+        "id": "34d528bb595484f9",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "83e7dbbe33056d07",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "function 2",
+        "func": "msg.payload = {value:40}\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 100,
+        "wires": [
+            [
+                "34d528bb595484f9",
+                "b1465d6f93c0de3a"
+            ]
+        ]
+    },
+    {
+        "id": "b1465d6f93c0de3a",
+        "type": "influxdb out",
+        "z": "76e4921e87a05a32",
+        "influxdb": "7e2934393ac03b0c",
+        "name": "univaq",
+        "measurement": "id",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "univaq",
+        "bucket": "prova",
+        "x": 570,
+        "y": 100,
+        "wires": []
     }
 ]
