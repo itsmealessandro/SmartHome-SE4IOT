@@ -83,8 +83,7 @@
         "y": 280,
         "wires": [
             [
-                "ac690e79b627b2d2",
-                "93eb87103951960d"
+                "56e146e9b511f1bc"
             ]
         ]
     },
@@ -97,11 +96,11 @@
         "tosidebar": true,
         "console": true,
         "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
+        "complete": "payload",
+        "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 720,
+        "x": 760,
         "y": 280,
         "wires": []
     },
@@ -239,18 +238,44 @@
         "wires": []
     },
     {
-        "id": "ac690e79b627b2d2",
-        "type": "json",
+        "id": "56e146e9b511f1bc",
+        "type": "function",
         "z": "76e4921e87a05a32",
-        "name": "",
-        "property": "payload",
-        "action": "str",
-        "pretty": false,
-        "x": 330,
-        "y": 340,
+        "name": "temperature check",
+        "func": "var temp_value = msg.payload\n\nif(temp_value != 21){\n    msg.payload = \"*** NORMAL VALUE ***\"\n}else{\n    msg.payload = \"*** ALERT VALUE ***\"\n    return msg;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 280,
         "wires": [
             [
-                "93eb87103951960d"
+                "93eb87103951960d",
+                "8dc0b6249cd06292"
+            ]
+        ]
+    },
+    {
+        "id": "8167e4f8183fc413",
+        "type": "mqtt in",
+        "z": "76e4921e87a05a32",
+        "name": "sensor2",
+        "topic": "SmartHome/bedroom/temperature",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "mqttBroker",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 360,
+        "wires": [
+            [
+                "56e146e9b511f1bc"
             ]
         ]
     }
