@@ -216,14 +216,14 @@
                 "vt": "str"
             }
         ],
-        "repeat": "",
+        "repeat": "90",
         "crontab": "",
-        "once": false,
+        "once": true,
         "onceDelay": 0.1,
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 220,
+        "x": 230,
         "y": 100,
         "wires": [
             [
@@ -252,7 +252,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "function 2",
-        "func": "msg.payload = {value:40}\nreturn msg",
+        "func": "msg.payload = {value:40}\nmsg.payload = { value: 10 }\nmsg.payload = { value: 30 }\nmsg.payload = { value: 40 }\nmsg.payload = { value: 60 }\nmsg.payload = { value: 90 }\nreturn msg",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,

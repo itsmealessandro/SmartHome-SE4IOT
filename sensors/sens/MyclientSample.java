@@ -18,7 +18,7 @@ public class MqttPublishSample {
     try {
       Thread.sleep(2000);
 
-      for (int i = 0; i < 1000; i++) {
+      for (int i = 0; i < 100; i++) {
         Thread.sleep(500);
         MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
         MqttConnectOptions connOpts = new MqttConnectOptions();
