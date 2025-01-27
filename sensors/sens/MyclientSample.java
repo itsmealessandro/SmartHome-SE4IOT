@@ -16,18 +16,20 @@ public class MqttPublishSample {
     MemoryPersistence persistence = new MemoryPersistence();
 
     try {
+    // NOTE: enstablishing MQTT Connection
+    MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
+    MqttConnectOptions connOpts = new MqttConnectOptions();
+    connOpts.setCleanSession(true);
+    System.out.println("------------------------------------------------------------");
+    System.out.println("Connecting to broker: " + broker);
+    sampleClient.connect(connOpts);
+    System.out.println("Connected");
+    System.out.println("------------------------------------------------------------");
+
       Thread.sleep(2000);
 
       for (int i = 0; i < 100; i++) {
         Thread.sleep(500);
-        MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
-        MqttConnectOptions connOpts = new MqttConnectOptions();
-        connOpts.setCleanSession(true);
-        System.out.println("------------------------------------------------------------");
-        System.out.println("Connecting to broker: " + broker);
-        sampleClient.connect(connOpts);
-        System.out.println("Connected");
-        System.out.println("------------------------------------------------------------");
 
         System.out.println("Publishing message: " + content);
         MqttMessage message = new MqttMessage(content.getBytes());
@@ -35,10 +37,13 @@ public class MqttPublishSample {
         sampleClient.publish(topic, message);
         System.out.println("Message published");
 
-        System.out.println("------------------------------------------------------------");
-        sampleClient.disconnect();
-        System.out.println("Disconnected");
       }
+
+
+      // Disconnecting
+      System.out.println("------------------------------------------------------------");
+      sampleClient.disconnect();
+      System.out.println("Disconnected");
       System.exit(0);
     } catch (MqttException me) {
       System.out.println("reason " + me.getReasonCode());

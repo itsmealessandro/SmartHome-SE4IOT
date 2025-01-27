@@ -54,7 +54,7 @@
         "name": "MQTT Input",
         "topic": "topicTest",
         "qos": "2",
-        "datatype": "auto",
+        "datatype": "auto-detect",
         "broker": "mqttBroker",
         "nl": false,
         "rap": false,
@@ -67,30 +67,13 @@
         ]
     },
     {
-        "id": "debugNode",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug MQTT",
-        "active": true,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 740,
-        "y": 200,
-        "wires": []
-    },
-    {
         "id": "32ab7c92513ab7e1",
         "type": "mqtt in",
         "z": "76e4921e87a05a32",
         "name": "sensor1",
-        "topic": "SmartHome/livingRoom/1",
+        "topic": "SmartHome/livingRoom/temperature",
         "qos": "2",
-        "datatype": "auto",
+        "datatype": "auto-detect",
         "broker": "mqttBroker",
         "nl": false,
         "rap": false,
@@ -192,8 +175,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 230,
-        "y": 100,
+        "x": 210,
+        "y": 60,
         "wires": [
             [
                 "83e7dbbe33056d07"
@@ -228,8 +211,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 400,
-        "y": 100,
+        "x": 380,
+        "y": 60,
         "wires": [
             [
                 "34d528bb595484f9",
