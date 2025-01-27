@@ -63,9 +63,7 @@
         "x": 200,
         "y": 200,
         "wires": [
-            [
-                "debugNode"
-            ]
+            []
         ]
     },
     {
@@ -81,7 +79,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 400,
+        "x": 740,
         "y": 200,
         "wires": []
     },
@@ -102,8 +100,8 @@
         "y": 280,
         "wires": [
             [
-                "93eb87103951960d",
-                "8dc0b6249cd06292"
+                "ac690e79b627b2d2",
+                "93eb87103951960d"
             ]
         ]
     },
@@ -120,7 +118,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 420,
+        "x": 720,
         "y": 280,
         "wires": []
     },
@@ -128,7 +126,7 @@
         "id": "ddb1cba5cc2fcff1",
         "type": "http request",
         "z": "76e4921e87a05a32",
-        "name": "",
+        "name": "tgbot alert",
         "method": "POST",
         "ret": "txt",
         "paytoqs": "ignore",
@@ -147,46 +145,17 @@
                 "valueValue": ""
             }
         ],
-        "x": 630,
-        "y": 400,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "6dce0143cbc1b4b1",
-        "type": "inject",
-        "z": "76e4921e87a05a32",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 200,
+        "x": 820,
         "y": 380,
         "wires": [
-            [
-                "8dc0b6249cd06292"
-            ]
+            []
         ]
     },
     {
         "id": "8dc0b6249cd06292",
         "type": "function",
         "z": "76e4921e87a05a32",
-        "name": "function 1",
+        "name": "send alert",
         "func": "msg.method = \"POST\";\nmsg.url = \"https://api.telegram.org/bot<hideToken>/sendMessage\";\nmsg.payload = {\n    chat_id: \"<hideChatId>\", // ID del gruppo\n    text: \"Hello, from nodered!\"  // Messaggio da inviare\n};\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -194,8 +163,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 400,
-        "y": 400,
+        "x": 580,
+        "y": 380,
         "wires": [
             [
                 "ddb1cba5cc2fcff1"
@@ -285,5 +254,21 @@
         "x": 570,
         "y": 100,
         "wires": []
+    },
+    {
+        "id": "ac690e79b627b2d2",
+        "type": "json",
+        "z": "76e4921e87a05a32",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 330,
+        "y": 340,
+        "wires": [
+            [
+                "93eb87103951960d"
+            ]
+        ]
     }
 ]
