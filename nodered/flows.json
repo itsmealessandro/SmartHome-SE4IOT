@@ -54,7 +54,7 @@
         "name": "MQTT Input",
         "topic": "topicTest",
         "qos": "2",
-        "datatype": "auto",
+        "datatype": "auto-detect",
         "broker": "mqttBroker",
         "nl": false,
         "rap": false,
@@ -63,36 +63,17 @@
         "x": 200,
         "y": 200,
         "wires": [
-            [
-                "debugNode"
-            ]
+            []
         ]
-    },
-    {
-        "id": "debugNode",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug MQTT",
-        "active": true,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 400,
-        "y": 200,
-        "wires": []
     },
     {
         "id": "32ab7c92513ab7e1",
         "type": "mqtt in",
         "z": "76e4921e87a05a32",
         "name": "sensor1",
-        "topic": "SmartHome/livingRoom/1",
+        "topic": "SmartHome/livingRoom/temperature",
         "qos": "2",
-        "datatype": "auto",
+        "datatype": "auto-detect",
         "broker": "mqttBroker",
         "nl": false,
         "rap": false,
@@ -102,8 +83,7 @@
         "y": 280,
         "wires": [
             [
-                "93eb87103951960d",
-                "8dc0b6249cd06292"
+                "56e146e9b511f1bc"
             ]
         ]
     },
@@ -116,11 +96,11 @@
         "tosidebar": true,
         "console": true,
         "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
+        "complete": "payload",
+        "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 420,
+        "x": 760,
         "y": 280,
         "wires": []
     },
@@ -128,7 +108,7 @@
         "id": "ddb1cba5cc2fcff1",
         "type": "http request",
         "z": "76e4921e87a05a32",
-        "name": "",
+        "name": "tgbot alert",
         "method": "POST",
         "ret": "txt",
         "paytoqs": "ignore",
@@ -147,46 +127,17 @@
                 "valueValue": ""
             }
         ],
-        "x": 630,
-        "y": 400,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "6dce0143cbc1b4b1",
-        "type": "inject",
-        "z": "76e4921e87a05a32",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 200,
+        "x": 820,
         "y": 380,
         "wires": [
-            [
-                "8dc0b6249cd06292"
-            ]
+            []
         ]
     },
     {
         "id": "8dc0b6249cd06292",
         "type": "function",
         "z": "76e4921e87a05a32",
-        "name": "function 1",
+        "name": "send alert",
         "func": "msg.method = \"POST\";\nmsg.url = \"https://api.telegram.org/bot<hideToken>/sendMessage\";\nmsg.payload = {\n    chat_id: \"<hideChatId>\", // ID del gruppo\n    text: \"Hello, from nodered!\"  // Messaggio da inviare\n};\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
@@ -194,8 +145,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 400,
-        "y": 400,
+        "x": 580,
+        "y": 380,
         "wires": [
             [
                 "ddb1cba5cc2fcff1"
@@ -223,8 +174,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 230,
-        "y": 100,
+        "x": 210,
+        "y": 60,
         "wires": [
             [
                 "83e7dbbe33056d07"
@@ -259,8 +210,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 400,
-        "y": 100,
+        "x": 380,
+        "y": 60,
         "wires": [
             [
                 "34d528bb595484f9",
@@ -285,5 +236,47 @@
         "x": 570,
         "y": 100,
         "wires": []
+    },
+    {
+        "id": "56e146e9b511f1bc",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "temperature check",
+        "func": "var temp_value = msg.payload\n\nif(temp_value != 21){\n    msg.payload = \"*** NORMAL VALUE ***\"\n}else{\n    msg.payload = \"*** ALERT VALUE ***\"\n    return msg;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 280,
+        "wires": [
+            [
+                "93eb87103951960d",
+                "8dc0b6249cd06292"
+            ]
+        ]
+    },
+    {
+        "id": "8167e4f8183fc413",
+        "type": "mqtt in",
+        "z": "76e4921e87a05a32",
+        "name": "sensor2",
+        "topic": "SmartHome/bedroom/temperature",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "mqttBroker",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 360,
+        "wires": [
+            [
+                "56e146e9b511f1bc"
+            ]
+        ]
     }
 ]
