@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: "Main Dashboard Provider"
+    orgId: 1
+    folder: "" # Lascia vuoto per importare nella cartella principale
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
+
