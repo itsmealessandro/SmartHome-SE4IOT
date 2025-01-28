@@ -32,23 +32,72 @@ services:
   # --------------------------------------------
   # INFLUXDB -----------------------------------
   # --------------------------------------------
+  #influxdb:
+  #  container_name: influxdb-container
+  #  build:
+  #    context: ./influxdb
+  #  ports:
+  #    - "8086:8086"
+  #  networks:
+  #    - net-test
+  #  volumes:
+  #    - influxdb-data:/var/lib/influxdb           # Volume per i dati di InfluxDB (persistenti)
+  #    - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # Configurazione personalizzata
+  #    - ./influxdb/setup_influx.sh:/docker-entrypoint-initdb.d/setup_influx.sh # Script di setup
+  #  environment:
+  #    - INFLUXDB_HTTP_AUTH_ENABLED=true
+  #    - INFLUX_TOKEN=${INFLUX_TOKEN}  # Variabile d'ambiente letta dal file .env
+  #    - INFLUX_ORG=${INFLUX_ORG}
+  #    - INFLUX_BUCKET=${INFLUX_BUCKET}
+  #  depends_on:
+  #    - broker
+  #  command: ["/bin/bash", "/setup_influx.sh"]  # Esegui lo script di setup
+  #  env_file:
+  #    - .env
+  # --------------------------------------------
+  # INFLUXDB -----------------------------------
+  # --------------------------------------------
   influxdb:
-    container_name: influxdb-container
-    build:
-      context: ./influxdb
-    hostname: influxdbName
-    ports:
-      - "8086:8086"
+    image: influxdb:2.1.1
     networks:
       - net-test
     volumes:
-      - ./influxdb:/var/lib/influxdb
-      - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
-    environment:
-      - INFLUXDB_HTTP_AUTH_ENABLED=true
-      - INFLUX_TOKEN=VYgbQWXlR51eaJkJTv-UujGEKyFmWavBHljSdQ7z8i-a1TCZ5l_FMyjOmOnoCnfwSbaDFvGyFcU3sSr0t_lupDQ==
+      - influxdb-storage:/var/lib/influxdb2:rw
+    env_file:
+      - .env
+    entrypoint: ["./entrypoint.sh"]
+    restart: on-failure:10
+    ports:
+      - ${DOCKER_INFLUXDB_INIT_PORT}:8086
+
+  # --------------------------------------------
+  # TELEGRAF --------------------------------------------
+  # --------------------------------------------
+  telegraf:
+    image: telegraf:1.19
+    networks:
+      - net-test
+    volumes:
+      - ${TELEGRAF_CFG_PATH}:/etc/telegraf/telegraf.conf:rw
+    env_file:
+      - .env
     depends_on:
-      - broker
+      - influxdb
+
+  # --------------------------------------------
+  # GRAFANA -----------------------------------
+  # --------------------------------------------
+  grafana:
+    image: grafana/grafana-oss:8.4.3
+    networks:
+      - net-test
+    volumes:
+      - grafana-storage:/var/lib/grafana:rw
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - influxdb
+    ports:
+      - ${GRAFANA_PORT}:3000
 
   # --------------------------------------------
   # SENSORS -----------------------------------
@@ -67,6 +116,6 @@ networks:
     driver: bridge
 
 volumes:
-  nodered:
-  mosquitto:
-  influxdb:
+  grafana-storage:
+  influxdb-storage:
+
