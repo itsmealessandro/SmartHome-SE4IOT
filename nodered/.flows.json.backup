@@ -83,7 +83,7 @@
         "y": 280,
         "wires": [
             [
-                "56e146e9b511f1bc"
+                "3255fb950199033f"
             ]
         ]
     },
@@ -100,8 +100,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 760,
-        "y": 280,
+        "x": 1000,
+        "y": 240,
         "wires": []
     },
     {
@@ -112,7 +112,7 @@
         "method": "POST",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "https://api.telegram.org/bot<tokenHide>/sendMessage",
+        "url": "https://api.telegram.org/bot/sendMessage",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -127,8 +127,8 @@
                 "valueValue": ""
             }
         ],
-        "x": 820,
-        "y": 380,
+        "x": 1380,
+        "y": 440,
         "wires": [
             []
         ]
@@ -138,15 +138,15 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "send alert",
-        "func": "msg.method = \"POST\";\nmsg.url = \"https://api.telegram.org/bot<hideToken>/sendMessage\";\nmsg.payload = {\n    chat_id: \"<hideChatId>\", // ID del gruppo\n    text: \"temp alarm!\"  // Messaggio da inviare\n};\nreturn msg;\n",
+        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: Exceded max val\"\n};\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 580,
-        "y": 380,
+        "x": 980,
+        "y": 280,
         "wires": [
             [
                 "ddb1cba5cc2fcff1"
@@ -242,14 +242,14 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "temperature check",
-        "func": "var temp_value = msg.payload\n\nif(temp_value <= 20){\n    msg.payload = \"*** NORMAL VALUE ***\"\n}else{\n    msg.payload = \"*** ALERT VALUE ***\"\n    return msg;\n}\n",
+        "func": "var temp_value = msg.payload.value\n\nif(temp_value > 20){\nreturn msg;\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 470,
+        "x": 770,
         "y": 280,
         "wires": [
             [
@@ -272,10 +272,10 @@
         "rh": 0,
         "inputs": 0,
         "x": 200,
-        "y": 360,
+        "y": 380,
         "wires": [
             [
-                "56e146e9b511f1bc"
+                "9c00ce625ea65f38"
             ]
         ]
     },
@@ -283,7 +283,7 @@
         "id": "48e209bea246f2fe",
         "type": "mqtt in",
         "z": "76e4921e87a05a32",
-        "name": "livTemp",
+        "name": "livLight",
         "topic": "SmartHome/livingRoom/light",
         "qos": "2",
         "datatype": "auto-detect",
@@ -293,15 +293,76 @@
         "rh": 0,
         "inputs": 0,
         "x": 190,
-        "y": 480,
+        "y": 500,
         "wires": [
             [
-                "376d691978934e26"
+                "e58b6cfeca6b2c12"
             ]
         ]
     },
     {
-        "id": "6ffd28efa1ad91f9",
+        "id": "625f726eabfccb88",
+        "type": "mqtt in",
+        "z": "76e4921e87a05a32",
+        "name": "bedLight",
+        "topic": "SmartHome/bedroom/light",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "mqttBroker",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 600,
+        "wires": [
+            [
+                "9b06fda8c2476965"
+            ]
+        ]
+    },
+    {
+        "id": "3255fb950199033f",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "JSON converter",
+        "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"temperature\",\n    value: val  \n};\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 280,
+        "wires": [
+            [
+                "56e146e9b511f1bc"
+            ]
+        ]
+    },
+    {
+        "id": "9c00ce625ea65f38",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "JSON converter",
+        "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"bedroom\",\n    sensor: \"temperature\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 380,
+        "wires": [
+            [
+                "ebfd701fe6506fd9"
+            ]
+        ]
+    },
+    {
+        "id": "0e58c8b40b18f3b4",
         "type": "debug",
         "z": "76e4921e87a05a32",
         "name": "Debug MQTT",
@@ -313,98 +374,203 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 760,
-        "y": 480,
+        "x": 1000,
+        "y": 340,
         "wires": []
     },
     {
-        "id": "087e3bb831efbe51",
-        "type": "http request",
-        "z": "76e4921e87a05a32",
-        "name": "tgbot alert",
-        "method": "POST",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "https://api.telegram.org/bot<tokenHide>/sendMessage",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [
-            {
-                "keyType": "other",
-                "keyValue": "",
-                "valueType": "other",
-                "valueValue": ""
-            }
-        ],
-        "x": 820,
-        "y": 580,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "5034b8eb79ecf011",
+        "id": "369060609f013492",
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "send alert",
-        "func": "msg.method = \"POST\";\nmsg.url = \"https://api.telegram.org/bot<hideToken>/sendMessage\";\nmsg.payload = {\n    chat_id: \"<hideChatId>\", // ID del gruppo\n    text: \"light alarm!\"  // Messaggio da inviare\n};\nreturn msg;\n",
+        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: Exceded max val\"\n};\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 580,
-        "y": 580,
+        "x": 980,
+        "y": 380,
         "wires": [
             [
-                "087e3bb831efbe51"
+                "ddb1cba5cc2fcff1"
             ]
         ]
     },
     {
-        "id": "376d691978934e26",
+        "id": "e58b6cfeca6b2c12",
         "type": "function",
         "z": "76e4921e87a05a32",
-        "name": "light check",
-        "func": "var temp_value = msg.payload\n\nif(temp_value == \"on\"){\n    msg.payload = \"*** NORMAL VALUE ***\"\n}else{\n    msg.payload = \"*** ALERT VALUE ***\"\n    return msg;\n}\n",
+        "name": "JSON converter",
+        "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 450,
-        "y": 480,
+        "x": 540,
+        "y": 500,
         "wires": [
             [
-                "6ffd28efa1ad91f9",
-                "5034b8eb79ecf011"
+                "91a8585d21109f84"
             ]
         ]
     },
     {
-        "id": "625f726eabfccb88",
-        "type": "mqtt in",
+        "id": "2f06c2b21f64e979",
+        "type": "debug",
         "z": "76e4921e87a05a32",
-        "name": "bedTemp",
-        "topic": "SmartHome/bedroom/light",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "mqttBroker",
-        "nl": false,
-        "rap": false,
-        "rh": 0,
-        "inputs": 0,
-        "x": 200,
-        "y": 560,
+        "name": "Debug MQTT",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "a4ec5736d406cc7d",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "send alert",
+        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: Exceded max val\"\n};\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 500,
         "wires": [
             [
-                "376d691978934e26"
+                "ddb1cba5cc2fcff1"
+            ]
+        ]
+    },
+    {
+        "id": "91a8585d21109f84",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "Light check",
+        "func": "var value = msg.payload.value\n\nif(value == \"off\"){\nreturn msg;\n}\n    \n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 500,
+        "wires": [
+            [
+                "2f06c2b21f64e979",
+                "a4ec5736d406cc7d"
+            ]
+        ]
+    },
+    {
+        "id": "9b06fda8c2476965",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "JSON converter",
+        "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 600,
+        "wires": [
+            [
+                "0c69c54f632c6d60"
+            ]
+        ]
+    },
+    {
+        "id": "024869cacf7cc0b4",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "Debug MQTT",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "d3f86d96dbe90376",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "send alert",
+        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: Exceded max val\"\n};\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 600,
+        "wires": [
+            [
+                "ddb1cba5cc2fcff1"
+            ]
+        ]
+    },
+    {
+        "id": "0c69c54f632c6d60",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "Light check",
+        "func": "var value = msg.payload.value\n\nif(value == \"off\"){\nreturn msg;\n}\n    \n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 600,
+        "wires": [
+            [
+                "024869cacf7cc0b4",
+                "d3f86d96dbe90376"
+            ]
+        ]
+    },
+    {
+        "id": "ebfd701fe6506fd9",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "temperature check",
+        "func": "var temp_value = msg.payload.value\n\nif(temp_value > 20){\nreturn msg;\n}\n    \n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 380,
+        "wires": [
+            [
+                "369060609f013492"
             ]
         ]
     }
