@@ -43,7 +43,7 @@
         "usetls": false,
         "tls": "",
         "influxdbVersion": "2.0",
-        "url": "http://influxdb-container:8086",
+        "url": "http://influxdb:8086",
         "timeout": 10,
         "rejectUnauthorized": true
     },
@@ -176,6 +176,7 @@
         "payloadType": "date",
         "x": 210,
         "y": 60,
+
         "wires": [
             [
                 "83e7dbbe33056d07"
@@ -203,7 +204,9 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "function 2",
+
         "func": "msg.payload = {value:40}\nmsg.payload = { value: 10 }\nmsg.payload = { value: 30 }\nmsg.payload = { value: 40 }\nmsg.payload = { value: 60 }\nmsg.payload = { value: 90 }\nreturn msg",
+
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -225,14 +228,14 @@
         "z": "76e4921e87a05a32",
         "influxdb": "7e2934393ac03b0c",
         "name": "univaq",
-        "measurement": "id",
+        "measurement": "value",
         "precision": "",
         "retentionPolicy": "",
         "database": "database",
         "precisionV18FluxV20": "ms",
         "retentionPolicyV18Flux": "",
         "org": "univaq",
-        "bucket": "prova",
+        "bucket": "smart_home_iot",
         "x": 570,
         "y": 100,
         "wires": []
