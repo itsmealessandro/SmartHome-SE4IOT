@@ -83,7 +83,8 @@
         "y": 280,
         "wires": [
             [
-                "3255fb950199033f"
+                "3255fb950199033f",
+                "0fe6921a486410a4"
             ]
         ]
     },
@@ -276,7 +277,8 @@
         "y": 380,
         "wires": [
             [
-                "9c00ce625ea65f38"
+                "9c00ce625ea65f38",
+                "0fe6921a486410a4"
             ]
         ]
     },
@@ -297,7 +299,8 @@
         "y": 500,
         "wires": [
             [
-                "e58b6cfeca6b2c12"
+                "e58b6cfeca6b2c12",
+                "0fe6921a486410a4"
             ]
         ]
     },
@@ -318,7 +321,8 @@
         "y": 600,
         "wires": [
             [
-                "9b06fda8c2476965"
+                "9b06fda8c2476965",
+                "0fe6921a486410a4"
             ]
         ]
     },
@@ -404,7 +408,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "JSON converter",
-        "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
+        "func": "\nlet val = msg.payload;\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -441,7 +445,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "send alert",
-        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: Exceded max val\"\n};\nreturn msg;\n",
+        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: lights off\"\n};\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -482,7 +486,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "JSON converter",
-        "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
+        "func": "\nlet val = msg.payload;\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -519,7 +523,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "send alert",
-        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: Exceded max val\"\n};\nreturn msg;\n",
+        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: lights off\"\n};\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -574,5 +578,22 @@
                 "369060609f013492"
             ]
         ]
+    },
+    {
+        "id": "0fe6921a486410a4",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "Debug MQTT",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 440,
+        "wires": []
     }
 ]
