@@ -12,11 +12,10 @@ public class SensBedLight {
     String topic = "SmartHome/bedroom/light";
     int qos = 1;
     String broker = "tcp://broker:1883";
-    String clientId = "2";
+    String clientId = "4";
     MemoryPersistence persistence = new MemoryPersistence();
 
     boolean active = true;
-    final int alertValue = 21;
     final String ANSI_RESET = "\u001B[0m";
     final String ANSI_BLACK = "\u001B[30m";
     final String ANSI_RED = "\u001B[31m";
@@ -50,13 +49,13 @@ public class SensBedLight {
           System.out.println("------------------------------------------------------------");
           System.out.println(ANSI_RED + " ALERT VALUE sens1");
           System.out.println("------------------------------------------------------------");
-          content = String.valueOf(alertValue);
+          content = "off";
 
         } else {
           System.out.println("------------------------------------------------------------");
           System.out.println(" normal VALUE sens1");
           System.out.println("------------------------------------------------------------");
-          content = String.valueOf(random.nextInt(16, 20));
+          content = "on";
         }
 
         Thread.sleep(500);
