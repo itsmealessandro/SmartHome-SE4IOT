@@ -176,7 +176,6 @@
         "payloadType": "date",
         "x": 210,
         "y": 60,
-
         "wires": [
             [
                 "83e7dbbe33056d07"
@@ -204,9 +203,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "function 2",
-
-        "func": "msg.payload = {value:40}\nmsg.payload = { value: 10 }\nmsg.payload = { value: 30 }\nmsg.payload = { value: 40 }\nmsg.payload = { value: 60 }\nmsg.payload = { value: 90 }\nreturn msg",
-
+        "func": "msg.payload = {value:600}\nreturn msg",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -256,7 +253,8 @@
         "y": 280,
         "wires": [
             [
-                "93eb87103951960d"
+                "93eb87103951960d",
+                "8dc0b6249cd06292"
             ]
         ]
     },

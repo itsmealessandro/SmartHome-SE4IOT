@@ -5,14 +5,14 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.util.Random;
 
-public class Sensor1 {
+public class SensBedTemp {
 
   public static void main(String[] args) {
 
-    String topic = "SmartHome/livingRoom/temperature";
+    String topic = "SmartHome/bedroom/temperature";
     int qos = 1;
     String broker = "tcp://broker:1883";
-    String clientId = "1";
+    String clientId = "2";
     MemoryPersistence persistence = new MemoryPersistence();
 
     boolean active = true;

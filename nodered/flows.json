@@ -70,7 +70,7 @@
         "id": "32ab7c92513ab7e1",
         "type": "mqtt in",
         "z": "76e4921e87a05a32",
-        "name": "sensor1",
+        "name": "livTemp",
         "topic": "SmartHome/livingRoom/temperature",
         "qos": "2",
         "datatype": "auto-detect",
@@ -138,7 +138,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "send alert",
-        "func": "msg.method = \"POST\";\nmsg.url = \"https://api.telegram.org/bot<hideToken>/sendMessage\";\nmsg.payload = {\n    chat_id: \"<hideChatId>\", // ID del gruppo\n    text: \"Hello, from nodered!\"  // Messaggio da inviare\n};\nreturn msg;\n",
+        "func": "msg.method = \"POST\";\nmsg.url = \"https://api.telegram.org/bot<hideToken>/sendMessage\";\nmsg.payload = {\n    chat_id: \"<hideChatId>\", // ID del gruppo\n    text: \"temp alarm!\"  // Messaggio da inviare\n};\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -242,7 +242,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "temperature check",
-        "func": "var temp_value = msg.payload\n\nif(temp_value != 21){\n    msg.payload = \"*** NORMAL VALUE ***\"\n}else{\n    msg.payload = \"*** ALERT VALUE ***\"\n    return msg;\n}\n",
+        "func": "var temp_value = msg.payload\n\nif(temp_value <= 20){\n    msg.payload = \"*** NORMAL VALUE ***\"\n}else{\n    msg.payload = \"*** ALERT VALUE ***\"\n    return msg;\n}\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -262,7 +262,7 @@
         "id": "8167e4f8183fc413",
         "type": "mqtt in",
         "z": "76e4921e87a05a32",
-        "name": "sensor2",
+        "name": "bedTemp",
         "topic": "SmartHome/bedroom/temperature",
         "qos": "2",
         "datatype": "auto-detect",
@@ -271,11 +271,140 @@
         "rap": false,
         "rh": 0,
         "inputs": 0,
-        "x": 190,
+        "x": 200,
         "y": 360,
         "wires": [
             [
                 "56e146e9b511f1bc"
+            ]
+        ]
+    },
+    {
+        "id": "48e209bea246f2fe",
+        "type": "mqtt in",
+        "z": "76e4921e87a05a32",
+        "name": "livTemp",
+        "topic": "SmartHome/livingRoom/light",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "mqttBroker",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 480,
+        "wires": [
+            [
+                "376d691978934e26"
+            ]
+        ]
+    },
+    {
+        "id": "6ffd28efa1ad91f9",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "Debug MQTT",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "087e3bb831efbe51",
+        "type": "http request",
+        "z": "76e4921e87a05a32",
+        "name": "tgbot alert",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.telegram.org/bot<tokenHide>/sendMessage",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "",
+                "valueType": "other",
+                "valueValue": ""
+            }
+        ],
+        "x": 820,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5034b8eb79ecf011",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "send alert",
+        "func": "msg.method = \"POST\";\nmsg.url = \"https://api.telegram.org/bot<hideToken>/sendMessage\";\nmsg.payload = {\n    chat_id: \"<hideChatId>\", // ID del gruppo\n    text: \"light alarm!\"  // Messaggio da inviare\n};\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 580,
+        "wires": [
+            [
+                "087e3bb831efbe51"
+            ]
+        ]
+    },
+    {
+        "id": "376d691978934e26",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "light check",
+        "func": "var temp_value = msg.payload\n\nif(temp_value <= 20){\n    msg.payload = \"*** NORMAL VALUE ***\"\n}else{\n    msg.payload = \"*** ALERT VALUE ***\"\n    return msg;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 480,
+        "wires": [
+            [
+                "6ffd28efa1ad91f9",
+                "5034b8eb79ecf011"
+            ]
+        ]
+    },
+    {
+        "id": "625f726eabfccb88",
+        "type": "mqtt in",
+        "z": "76e4921e87a05a32",
+        "name": "bedTemp",
+        "topic": "SmartHome/bedroom/light",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "mqttBroker",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 560,
+        "wires": [
+            [
+                "376d691978934e26"
             ]
         ]
     }
