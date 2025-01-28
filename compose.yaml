@@ -93,7 +93,7 @@ services:
       - net-test
     volumes:
       - grafana-storage:/var/lib/grafana:rw
-      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro    
     depends_on:
       - influxdb
     ports:
