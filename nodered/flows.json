@@ -14,10 +14,12 @@
         "broker": "broker",
         "port": "1883",
         "clientid": "",
+        "autoConnect": true,
         "usetls": false,
         "protocolVersion": "4",
         "keepalive": "60",
         "cleansession": true,
+        "autoUnsubscribe": true,
         "birthTopic": "",
         "birthQos": "0",
         "birthPayload": "",
@@ -30,6 +32,7 @@
         "willQos": "0",
         "willPayload": "",
         "willMsg": {},
+        "userProps": "",
         "sessionExpiry": ""
     },
     {
@@ -60,8 +63,8 @@
         "rap": false,
         "rh": 0,
         "inputs": 0,
-        "x": 200,
-        "y": 200,
+        "x": 190,
+        "y": 140,
         "wires": [
             []
         ]
@@ -244,7 +247,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "temperature check",
-        "func": "var temp_value = msg.payload.value\n\nif(temp_value > 20){\nreturn msg;\n}\n    \n",
+        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\nreturn msg;\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -465,7 +468,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "Light check",
-        "func": "var value = msg.payload.value\n\nif(value == \"off\"){\nreturn msg;\n}\n    \n",
+        "func": "var value = msg.payload.value\n\nif(value == global.get(\"threshold\")){\nreturn msg;\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -543,7 +546,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "Light check",
-        "func": "var value = msg.payload.value\n\nif(value == \"off\"){\nreturn msg;\n}\n    \n",
+        "func": "var value = msg.payload.value\n\nif(value == global.get(\"threshold\")){\nreturn msg;\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -564,7 +567,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "temperature check",
-        "func": "var temp_value = msg.payload.value\n\nif(temp_value > 20){\nreturn msg;\n}\n    \n",
+        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\nreturn msg;\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -594,6 +597,145 @@
         "statusType": "auto",
         "x": 460,
         "y": 440,
+        "wires": []
+    },
+    {
+        "id": "1500b7b6820595b5",
+        "type": "mqtt in",
+        "z": "76e4921e87a05a32",
+        "name": "Get Threshold",
+        "topic": "temperature/threshold",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "mqttBroker",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 680,
+        "wires": [
+            [
+                "05c9a11d17c44491"
+            ]
+        ]
+    },
+    {
+        "id": "1c8ad30cd8fb4fbb",
+        "type": "mqtt out",
+        "z": "76e4921e87a05a32",
+        "name": "Temp threshold",
+        "topic": "temperature/threshold",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "mqttBroker",
+        "x": 700,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "05c9a11d17c44491",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "set threshold",
+        "func": "var threshold_value = msg.payload\nglobal.set(\"threshold\",threshold_value);\nmsg.payload = \"threshold set to:\" + threshold_value;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 680,
+        "wires": [
+            [
+                "7fd76f0345491f38"
+            ]
+        ]
+    },
+    {
+        "id": "7fd76f0345491f38",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "Debug threshold",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "537f0d14f0763a0f",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "threshold value",
+        "func": "msg.payload = 20\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 740,
+        "wires": [
+            [
+                "1c8ad30cd8fb4fbb"
+            ]
+        ]
+    },
+    {
+        "id": "acfbe19e2c380baa",
+        "type": "inject",
+        "z": "76e4921e87a05a32",
+        "name": "activate threshold",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 740,
+        "wires": [
+            [
+                "537f0d14f0763a0f",
+                "7d0bd14992733c01"
+            ]
+        ]
+    },
+    {
+        "id": "7d0bd14992733c01",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "Debug threshold",
+        "active": false,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 800,
         "wires": []
     }
 ]
