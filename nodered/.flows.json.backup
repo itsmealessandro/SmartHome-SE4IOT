@@ -95,7 +95,7 @@
         "id": "93eb87103951960d",
         "type": "debug",
         "z": "76e4921e87a05a32",
-        "name": "Debug MQTT",
+        "name": "Debug Alert Temp Livingroom",
         "active": true,
         "tosidebar": true,
         "console": true,
@@ -104,7 +104,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1000,
+        "x": 1050,
         "y": 240,
         "wires": []
     },
@@ -247,7 +247,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "temperature check",
-        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\nreturn msg;\n}\n    \n",
+        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\n\nmsg.payload = \"Temperature threshhold violated:\" + temp_value;\nreturn msg;\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -373,7 +373,7 @@
         "id": "0e58c8b40b18f3b4",
         "type": "debug",
         "z": "76e4921e87a05a32",
-        "name": "Debug MQTT",
+        "name": "Debug Alert Temp Bedroom",
         "active": true,
         "tosidebar": true,
         "console": true,
@@ -382,7 +382,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1000,
+        "x": 1050,
         "y": 340,
         "wires": []
     },
@@ -430,7 +430,7 @@
         "id": "2f06c2b21f64e979",
         "type": "debug",
         "z": "76e4921e87a05a32",
-        "name": "Debug MQTT",
+        "name": "Debug Alert Light Livingroom",
         "active": true,
         "tosidebar": true,
         "console": true,
@@ -439,7 +439,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1000,
+        "x": 1050,
         "y": 460,
         "wires": []
     },
@@ -468,7 +468,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "Light check",
-        "func": "var value = msg.payload.value\n\nif(value == global.get(\"threshold\")){\nreturn msg;\n}\n    \n",
+        "func": "var value = msg.payload.value\n\nif(value == global.get(\"Lthreshold\")){\n\nmsg.payload = \"Light threshhold violated:\" + value;\n\nreturn msg;\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -508,7 +508,7 @@
         "id": "024869cacf7cc0b4",
         "type": "debug",
         "z": "76e4921e87a05a32",
-        "name": "Debug MQTT",
+        "name": "Debug Alert Light Bedroom",
         "active": true,
         "tosidebar": true,
         "console": true,
@@ -517,7 +517,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1000,
+        "x": 1050,
         "y": 560,
         "wires": []
     },
@@ -546,7 +546,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "Light check",
-        "func": "var value = msg.payload.value\n\nif(value == global.get(\"threshold\")){\nreturn msg;\n}\n    \n",
+        "func": "var value = msg.payload.value\n\nif(value == global.get(\"Lthreshold\")){\n\nmsg.payload = \"Light threshhold violated:\" + value;\nreturn msg;\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -567,7 +567,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "temperature check",
-        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\nreturn msg;\n}\n    \n",
+        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\n\nmsg.payload = \"Temperature threshhold violated:\" + temp_value;\nreturn msg;\n\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -578,7 +578,8 @@
         "y": 380,
         "wires": [
             [
-                "369060609f013492"
+                "369060609f013492",
+                "0e58c8b40b18f3b4"
             ]
         ]
     },
@@ -634,7 +635,7 @@
         "correl": "",
         "expiry": "",
         "broker": "mqttBroker",
-        "x": 680,
+        "x": 700,
         "y": 740,
         "wires": []
     },
@@ -663,7 +664,7 @@
         "type": "debug",
         "z": "76e4921e87a05a32",
         "name": "Debug threshold",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -726,7 +727,7 @@
         "type": "debug",
         "z": "76e4921e87a05a32",
         "name": "Debug threshold",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": true,
         "tostatus": false,
@@ -736,6 +737,145 @@
         "statusType": "auto",
         "x": 490,
         "y": 800,
+        "wires": []
+    },
+    {
+        "id": "4e032a53e645f15d",
+        "type": "mqtt in",
+        "z": "76e4921e87a05a32",
+        "name": "Get Threshold",
+        "topic": "light/threshold",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "mqttBroker",
+        "nl": false,
+        "rap": false,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 900,
+        "wires": [
+            [
+                "d8667e3e150d3bcd"
+            ]
+        ]
+    },
+    {
+        "id": "072be305d7dbd932",
+        "type": "mqtt out",
+        "z": "76e4921e87a05a32",
+        "name": "Light threshold",
+        "topic": "light/threshold",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "mqttBroker",
+        "x": 700,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "d8667e3e150d3bcd",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "set threshold",
+        "func": "var threshold_value = msg.payload\nglobal.set(\"Lthreshold\",threshold_value);\nmsg.payload = \"Lthreshold set to:\" + threshold_value;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 900,
+        "wires": [
+            [
+                "cbb5b3db72e75f8d"
+            ]
+        ]
+    },
+    {
+        "id": "cbb5b3db72e75f8d",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "Debug threshold",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "02a06790660f1a34",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "threshold value",
+        "func": "msg.payload = \"off\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 960,
+        "wires": [
+            [
+                "072be305d7dbd932"
+            ]
+        ]
+    },
+    {
+        "id": "b976ba14b1fc5626",
+        "type": "inject",
+        "z": "76e4921e87a05a32",
+        "name": "activate threshold",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 960,
+        "wires": [
+            [
+                "02a06790660f1a34",
+                "89b7a86afde64373"
+            ]
+        ]
+    },
+    {
+        "id": "89b7a86afde64373",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "Debug threshold",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 1020,
         "wires": []
     }
 ]

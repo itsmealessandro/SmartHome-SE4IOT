@@ -31,11 +31,11 @@ public class SensBedLight {
       MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);
-//       System.out.println("------------------------------------------------------------");
-//       System.out.println("Connecting to broker: " + broker);
+      // System.out.println("------------------------------------------------------------");
+      // System.out.println("Connecting to broker: " + broker);
       sampleClient.connect(connOpts);
-//       System.out.println("Connected");
-//       System.out.println("------------------------------------------------------------");
+      // System.out.println("Connected");
+      // System.out.println("------------------------------------------------------------");
       Thread.sleep(2000);
 
       while (active) {
@@ -44,17 +44,17 @@ public class SensBedLight {
         Random random = new Random();
         // 5% probability to trigger alarm
         int alertProb = random.nextInt(0, 100);
-        if (alertProb <= 5) {
+        if (alertProb <= 10) {
 
-//           System.out.println("------------------------------------------------------------");
-//           System.out.println(ANSI_RED + " ALERT VALUE sens1");
-//           System.out.println("------------------------------------------------------------");
+          // System.out.println("------------------------------------------------------------");
+          System.out.println(ANSI_RED + " ALERT VALUE sens1");
+          // System.out.println("------------------------------------------------------------");
           content = "off";
 
         } else {
-//           System.out.println("------------------------------------------------------------");
-//           System.out.println(" normal VALUE sens1");
-//           System.out.println("------------------------------------------------------------");
+          // System.out.println("------------------------------------------------------------");
+          // System.out.println(" normal VALUE sens1");
+          // System.out.println("------------------------------------------------------------");
           content = "on";
         }
 
@@ -62,28 +62,28 @@ public class SensBedLight {
 
         MqttMessage message = new MqttMessage(content.getBytes());
 
-//         System.out.println("Publishing message: " + content);
+        // System.out.println("Publishing message: " + content);
         message.setQos(qos);
         sampleClient.publish(topic, message);
-//         System.out.println("Message published");
+        // System.out.println("Message published");
 
       }
 
       // Disconnecting
-//       System.out.println("------------------------------------------------------------");
+      // System.out.println("------------------------------------------------------------");
       sampleClient.disconnect();
-//       System.out.println("Disconnected");
+      // System.out.println("Disconnected");
       System.exit(0);
     } catch (MqttException me) {
-//       System.out.println("reason " + me.getReasonCode());
-//       System.out.println("msg " + me.getMessage());
-//       System.out.println("loc " + me.getLocalizedMessage());
-//       System.out.println("cause " + me.getCause());
-//       System.out.println("excep " + me);
+      // System.out.println("reason " + me.getReasonCode());
+      // System.out.println("msg " + me.getMessage());
+      // System.out.println("loc " + me.getLocalizedMessage());
+      // System.out.println("cause " + me.getCause());
+      // System.out.println("excep " + me);
       me.printStackTrace();
       System.exit(1);
     } catch (InterruptedException i) {
-//       System.out.println("time exeption");
+      // System.out.println("time exeption");
       i.printStackTrace();
       System.exit(1);
 
