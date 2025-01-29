@@ -49,13 +49,13 @@ public class SensBedLight {
           // System.out.println("------------------------------------------------------------");
           System.out.println(ANSI_RED + " ALERT VALUE sens1");
           // System.out.println("------------------------------------------------------------");
-          content = "off";
+          content = String.valueOf(random.nextInt(6, 10));
 
         } else {
           // System.out.println("------------------------------------------------------------");
           // System.out.println(" normal VALUE sens1");
           // System.out.println("------------------------------------------------------------");
-          content = "on";
+          content = String.valueOf(random.nextInt(5));
         }
 
         Thread.sleep(500);
