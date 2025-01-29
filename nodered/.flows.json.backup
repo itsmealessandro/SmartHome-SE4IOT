@@ -171,7 +171,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "90",
+        "repeat": "1",
         "crontab": "",
         "once": true,
         "onceDelay": 0.1,
@@ -191,7 +191,7 @@
         "type": "debug",
         "z": "76e4921e87a05a32",
         "name": "debug 1",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -219,8 +219,7 @@
         "y": 60,
         "wires": [
             [
-                "34d528bb595484f9",
-                "b1465d6f93c0de3a"
+                "34d528bb595484f9"
             ]
         ]
     },
@@ -229,8 +228,8 @@
         "type": "influxdb out",
         "z": "76e4921e87a05a32",
         "influxdb": "7e2934393ac03b0c",
-        "name": "univaq",
-        "measurement": "value",
+        "name": "influx",
+        "measurement": "temp_liv",
         "precision": "",
         "retentionPolicy": "",
         "database": "database",
@@ -238,8 +237,8 @@
         "retentionPolicyV18Flux": "",
         "org": "univaq",
         "bucket": "smart_home_iot",
-        "x": 570,
-        "y": 100,
+        "x": 770,
+        "y": 160,
         "wires": []
     },
     {
@@ -345,7 +344,8 @@
         "y": 280,
         "wires": [
             [
-                "56e146e9b511f1bc"
+                "56e146e9b511f1bc",
+                "2c77131cb18dc3a8"
             ]
         ]
     },
@@ -727,7 +727,7 @@
         "type": "debug",
         "z": "76e4921e87a05a32",
         "name": "Debug threshold",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": true,
         "tostatus": false,
@@ -866,7 +866,7 @@
         "type": "debug",
         "z": "76e4921e87a05a32",
         "name": "Debug threshold",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": true,
         "tostatus": false,
@@ -877,5 +877,25 @@
         "x": 490,
         "y": 1020,
         "wires": []
+    },
+    {
+        "id": "2c77131cb18dc3a8",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "into influx",
+        "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 180,
+        "wires": [
+            [
+                "b1465d6f93c0de3a"
+            ]
+        ]
     }
 ]

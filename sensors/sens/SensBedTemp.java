@@ -45,7 +45,7 @@ public class SensBedTemp {
         Random random = new Random();
         // 5% probability to trigger alarm
         int alertProb = random.nextInt(0, 100);
-        if (alertProb <= 10) {
+        if (alertProb <= 5) {
 
           // System.out.println("------------------------------------------------------------");
           System.out.println(ANSI_RED + " ALERT VALUE sens1");
