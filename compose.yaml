@@ -3,11 +3,13 @@ services:
   # MOSQUITTO -----------------------------------
   # --------------------------------------------
   broker:
+    env_file:
+      - .env
     container_name: mosquitto-container
     hostname: mosquittoName
     image: eclipse-mosquitto
     ports:
-      - "1883:1883"
+      - "${MOSQUITTO_PORT}:1883"
     networks:
       - net-test
     volumes:
@@ -17,11 +19,13 @@ services:
   # NODERED -----------------------------------
   # --------------------------------------------
   nodered:
+    env_file:
+      - .env
     container_name: nodered-container
     image: nodered/node-red:latest
     hostname: nodeName
     ports:
-      - "1880:1880"
+      - "${NODERED_PORT}:1880"
     networks:
       - net-test
     volumes:
@@ -34,13 +38,15 @@ services:
   # INFLUXDB -----------------------------------
   # --------------------------------------------
   influxdb:
+    env_file:
+      - .env
     image: influxdb:2.1.1
     networks:
       - net-test
     volumes:
       - influxdb-storage:/var/lib/influxdb2:rw
-    env_file:
-      - .env
+    #env_file:
+    # - .env
     entrypoint: ["./entrypoint.sh"]
     restart: on-failure:10
     ports:
@@ -50,6 +56,8 @@ services:
   # GRAFANA -----------------------------------
   # --------------------------------------------
   grafana:
+    env_file:
+      - .env
     image: grafana/grafana-oss:8.4.3
     networks:
       - net-test
@@ -80,4 +88,3 @@ networks:
 volumes:
   grafana-storage:
   influxdb-storage:
-
