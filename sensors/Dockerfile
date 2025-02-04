@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 RUN apt update && \
-    apt install -y default-jre
+    apt install -y default-jdk
 
 COPY ./sens/ /sens/
 COPY ./sensorsSetup.sh /
