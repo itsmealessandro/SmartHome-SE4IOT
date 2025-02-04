@@ -5,18 +5,17 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.util.Random;
 
-public class SensBedLight {
+public class DynamicSensor {
 
   public static void main(String[] args) {
 
-    String topic = "SmartHome/livingRoom/light";
+    String topic = args[0];
     int qos = 1;
     String broker = "tcp://broker:1883";
-    String clientId = "3";
+    String clientId = args[1];
     MemoryPersistence persistence = new MemoryPersistence();
 
     boolean active = true;
-    final int alertValue = 21;
     final String ANSI_RESET = "\u001B[0m";
     final String ANSI_BLACK = "\u001B[30m";
     final String ANSI_RED = "\u001B[31m";
@@ -26,6 +25,8 @@ public class SensBedLight {
     final String ANSI_PURPLE = "\u001B[35m";
     final String ANSI_CYAN = "\u001B[36m";
     final String ANSI_WHITE = "\u001B[37m";
+
+    System.out.println(ANSI_GREEN + "Dynamic sensor activated" + args[0]);
 
     try {
       // NOTE: enstablishing MQTT Connection
@@ -48,7 +49,7 @@ public class SensBedLight {
         if (alertProb <= 5) {
 
           // System.out.println("------------------------------------------------------------");
-          System.out.println(ANSI_RED + " ALERT VALUE sens1");
+          System.out.println(ANSI_RED + " ALERT VALUE sensor:" + args[0]);
           // System.out.println("------------------------------------------------------------");
           content = String.valueOf(random.nextInt(6, 10));
 
