@@ -92,23 +92,6 @@
         ]
     },
     {
-        "id": "93eb87103951960d",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug Alert Temp Livingroom",
-        "active": true,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1050,
-        "y": 240,
-        "wires": []
-    },
-    {
         "id": "ddb1cba5cc2fcff1",
         "type": "http request",
         "z": "76e4921e87a05a32",
@@ -116,7 +99,7 @@
         "method": "POST",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "https://api.telegram.org/${TGBOT_TOKEN}/sendMessage",
+        "url": "",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -134,26 +117,8 @@
         "x": 1660,
         "y": 420,
         "wires": [
-            []
-        ]
-    },
-    {
-        "id": "8dc0b6249cd06292",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "send alert",
-        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"${TG_CHAT_ID}\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: Exceded max val\"\n};\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 980,
-        "y": 280,
-        "wires": [
             [
-                "ddb1cba5cc2fcff1"
+                "51b437a80f1c641d"
             ]
         ]
     },
@@ -191,7 +156,7 @@
         "type": "debug",
         "z": "76e4921e87a05a32",
         "name": "debug 1",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -208,7 +173,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "function 2",
-        "func": "msg.payload = env.get(\"TG_CHAT_ID\") + env.get(\"TGBOT_TOKEN\");\nreturn msg;",
+        "func": "msg.payload = env.get(\"TG_CHAT_ID\") + \" \" + env.get(\"TGBOT_TOKEN\");\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -228,7 +193,7 @@
         "type": "influxdb out",
         "z": "76e4921e87a05a32",
         "influxdb": "7e2934393ac03b0c",
-        "name": "influx",
+        "name": "influx tempLiv",
         "measurement": "temp_liv",
         "precision": "",
         "retentionPolicy": "",
@@ -237,30 +202,9 @@
         "retentionPolicyV18Flux": "",
         "org": "univaq",
         "bucket": "smart_home_iot",
-        "x": 910,
+        "x": 940,
         "y": 160,
         "wires": []
-    },
-    {
-        "id": "56e146e9b511f1bc",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "temperature check",
-        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\n\nmsg.payload = \"Temperature threshhold violated:\" + temp_value;\nreturn msg;\n}\n    \n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 770,
-        "y": 280,
-        "wires": [
-            [
-                "93eb87103951960d",
-                "8dc0b6249cd06292"
-            ]
-        ]
     },
     {
         "id": "8167e4f8183fc413",
@@ -344,8 +288,8 @@
         "y": 280,
         "wires": [
             [
-                "56e146e9b511f1bc",
-                "2c77131cb18dc3a8"
+                "2c77131cb18dc3a8",
+                "ebfd701fe6506fd9"
             ]
         ]
     },
@@ -365,45 +309,29 @@
         "y": 380,
         "wires": [
             [
-                "ebfd701fe6506fd9",
-                "f4db77a843796db9"
+                "f4db77a843796db9",
+                "ebfd701fe6506fd9"
             ]
         ]
-    },
-    {
-        "id": "0e58c8b40b18f3b4",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug Alert Temp Bedroom",
-        "active": true,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1050,
-        "y": 340,
-        "wires": []
     },
     {
         "id": "369060609f013492",
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "send alert",
-        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nvar chatID = env.get(\"TG_CHAT_ID\");\nmsg.payload = {\n    chat_id: chatID, // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: Exceded max val\"\n};\nreturn msg;\n",
+        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nvar chatID = env.get(\"TG_CHAT_ID\");\nvar token = env.get(\"TGBOT_TOKEN\");\nmsg.url = \"https://api.telegram.org/bot\" + token + \"/sendMessage\";\n\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\"\n};\n\nmsg.payload = JSON.stringify({\n    chat_id: chatID,\n    text:\n        \"Domain: SmartHome\\n\" +\n        \"Location: \" + place + \"\\n\" +\n        \"Sensor: \" + sens + \"\\n\" +\n        \"Condition: Exceeded max value\"\n});\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 980,
-        "y": 380,
+        "x": 1340,
+        "y": 420,
         "wires": [
             [
-                "ddb1cba5cc2fcff1"
+                "ddb1cba5cc2fcff1",
+                "63e20e0b668699f8"
             ]
         ]
     },
@@ -429,60 +357,22 @@
         ]
     },
     {
-        "id": "2f06c2b21f64e979",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug Alert Light Livingroom",
-        "active": true,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1010,
-        "y": 560,
-        "wires": []
-    },
-    {
-        "id": "a4ec5736d406cc7d",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "send alert",
-        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: lights off\"\n};\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 940,
-        "y": 600,
-        "wires": [
-            [
-                "ddb1cba5cc2fcff1"
-            ]
-        ]
-    },
-    {
         "id": "91a8585d21109f84",
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "Light check",
-        "func": "var value = msg.payload.value\n\nif(value > global.get(\"Lthreshold\")){\n\nmsg.payload = \"Light threshhold violated:\" + value;\n\nreturn msg;\n}\n    \n",
+        "func": "var value = msg.payload.value\n\nif(value > global.get(\"Lthreshold\")){\n\nreturn msg;\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 710,
-        "y": 600,
+        "x": 1050,
+        "y": 660,
         "wires": [
             [
-                "2f06c2b21f64e979",
-                "a4ec5736d406cc7d"
+                "369060609f013492"
             ]
         ]
     },
@@ -502,87 +392,8 @@
         "y": 760,
         "wires": [
             [
-                "0c69c54f632c6d60",
+                "91a8585d21109f84",
                 "5bdc724efb391ce4"
-            ]
-        ]
-    },
-    {
-        "id": "024869cacf7cc0b4",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug Alert Light Bedroom",
-        "active": true,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1090,
-        "y": 800,
-        "wires": []
-    },
-    {
-        "id": "d3f86d96dbe90376",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "send alert",
-        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nmsg.payload = {\n    chat_id: \"-4703470840\", // ID del gruppo\n    text:\n    \"Domain: \" + \"SmartHome\" + \"\\n\" +\n    \"Location: \" + place + \"\\n\" +\n    \"Sensor: \" + sens + \"\\n\" +\n    \"Condition: lights off\"\n};\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 940,
-        "y": 760,
-        "wires": [
-            [
-                "ddb1cba5cc2fcff1"
-            ]
-        ]
-    },
-    {
-        "id": "0c69c54f632c6d60",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "Light check",
-        "func": "var value = msg.payload.value\n\nif(value > global.get(\"Lthreshold\")){\n\nmsg.payload = \"Light threshhold violated:\" + value;\nreturn msg;\n}\n    \n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 710,
-        "y": 760,
-        "wires": [
-            [
-                "024869cacf7cc0b4",
-                "d3f86d96dbe90376"
-            ]
-        ]
-    },
-    {
-        "id": "ebfd701fe6506fd9",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "temperature check",
-        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\n\nmsg.payload = \"Temperature threshhold violated:\" + temp_value;\nreturn msg;\n\n}\n    \n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 770,
-        "y": 380,
-        "wires": [
-            [
-                "369060609f013492",
-                "0e58c8b40b18f3b4"
             ]
         ]
     },
@@ -882,6 +693,97 @@
         "wires": []
     },
     {
+        "id": "c5f7ab95ea2a75e1",
+        "type": "influxdb out",
+        "z": "76e4921e87a05a32",
+        "influxdb": "7e2934393ac03b0c",
+        "name": "influx LightBed",
+        "measurement": "light_bed",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "univaq",
+        "bucket": "smart_home_iot",
+        "x": 860,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "cc30f2e3544c46ad",
+        "type": "influxdb out",
+        "z": "76e4921e87a05a32",
+        "influxdb": "7e2934393ac03b0c",
+        "name": "influx lightLiv",
+        "measurement": "light_liv",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "univaq",
+        "bucket": "smart_home_iot",
+        "x": 870,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "3bb32a288ef54e05",
+        "type": "influxdb out",
+        "z": "76e4921e87a05a32",
+        "influxdb": "7e2934393ac03b0c",
+        "name": "influx tempBed",
+        "measurement": "temp_bed",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "univaq",
+        "bucket": "smart_home_iot",
+        "x": 860,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "f4db77a843796db9",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "into influx",
+        "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 460,
+        "wires": [
+            [
+                "3bb32a288ef54e05"
+            ]
+        ]
+    },
+    {
+        "id": "63e20e0b668699f8",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "bot",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1510,
+        "y": 300,
+        "wires": []
+    },
+    {
         "id": "2c77131cb18dc3a8",
         "type": "function",
         "z": "76e4921e87a05a32",
@@ -898,6 +800,26 @@
         "wires": [
             [
                 "b1465d6f93c0de3a"
+            ]
+        ]
+    },
+    {
+        "id": "d25bdeec47b39ed2",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "into influx",
+        "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 560,
+        "wires": [
+            [
+                "cc30f2e3544c46ad"
             ]
         ]
     },
@@ -922,96 +844,39 @@
         ]
     },
     {
-        "id": "c5f7ab95ea2a75e1",
-        "type": "influxdb out",
+        "id": "51b437a80f1c641d",
+        "type": "debug",
         "z": "76e4921e87a05a32",
-        "influxdb": "7e2934393ac03b0c",
-        "name": "influx",
-        "measurement": "light_bed",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "univaq",
-        "bucket": "smart_home_iot",
-        "x": 830,
-        "y": 820,
+        "name": "response",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1850,
+        "y": 420,
         "wires": []
     },
     {
-        "id": "d25bdeec47b39ed2",
+        "id": "ebfd701fe6506fd9",
         "type": "function",
         "z": "76e4921e87a05a32",
-        "name": "into influx",
-        "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
+        "name": "temperature check",
+        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\n\nreturn msg;\n\n}\n    \n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 700,
-        "y": 700,
+        "x": 950,
+        "y": 320,
         "wires": [
             [
-                "cc30f2e3544c46ad"
-            ]
-        ]
-    },
-    {
-        "id": "cc30f2e3544c46ad",
-        "type": "influxdb out",
-        "z": "76e4921e87a05a32",
-        "influxdb": "7e2934393ac03b0c",
-        "name": "influx",
-        "measurement": "light_liv",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "univaq",
-        "bucket": "smart_home_iot",
-        "x": 850,
-        "y": 700,
-        "wires": []
-    },
-    {
-        "id": "3bb32a288ef54e05",
-        "type": "influxdb out",
-        "z": "76e4921e87a05a32",
-        "influxdb": "7e2934393ac03b0c",
-        "name": "influx",
-        "measurement": "temp_bed",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "univaq",
-        "bucket": "smart_home_iot",
-        "x": 830,
-        "y": 460,
-        "wires": []
-    },
-    {
-        "id": "f4db77a843796db9",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "into influx",
-        "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 680,
-        "y": 460,
-        "wires": [
-            [
-                "3bb32a288ef54e05"
+                "369060609f013492"
             ]
         ]
     }
