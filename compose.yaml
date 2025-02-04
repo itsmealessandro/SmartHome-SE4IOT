@@ -3,11 +3,13 @@ services:
   # MOSQUITTO -----------------------------------
   # --------------------------------------------
   broker:
+    env_file:
+      - .env
     container_name: mosquitto-container
     hostname: mosquittoName
     image: eclipse-mosquitto
     ports:
-      - "1883:1883"
+      - "${MOSQUITTO_PORT}:1883"
     networks:
       - net-test
     volumes:
@@ -17,11 +19,13 @@ services:
   # NODERED -----------------------------------
   # --------------------------------------------
   nodered:
+    env_file:
+      - .env
     container_name: nodered-container
     image: nodered/node-red:latest
     hostname: nodeName
     ports:
-      - "1880:1880"
+      - "${NODERED_PORT}:1880"
     networks:
       - net-test
     volumes:
@@ -29,65 +33,31 @@ services:
     depends_on:
       - broker
 
-  # --------------------------------------------
-  # INFLUXDB -----------------------------------
-  # --------------------------------------------
-  #influxdb:
-  #  container_name: influxdb-container
-  #  build:
-  #    context: ./influxdb
-  #  ports:
-  #    - "8086:8086"
-  #  networks:
-  #    - net-test
-  #  volumes:
-  #    - influxdb-data:/var/lib/influxdb           # Volume per i dati di InfluxDB (persistenti)
-  #    - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # Configurazione personalizzata
-  #    - ./influxdb/setup_influx.sh:/docker-entrypoint-initdb.d/setup_influx.sh # Script di setup
-  #  environment:
-  #    - INFLUXDB_HTTP_AUTH_ENABLED=true
-  #    - INFLUX_TOKEN=${INFLUX_TOKEN}  # Variabile d'ambiente letta dal file .env
-  #    - INFLUX_ORG=${INFLUX_ORG}
-  #    - INFLUX_BUCKET=${INFLUX_BUCKET}
-  #  depends_on:
-  #    - broker
-  #  command: ["/bin/bash", "/setup_influx.sh"]  # Esegui lo script di setup
-  #  env_file:
-  #    - .env
+
   # --------------------------------------------
   # INFLUXDB -----------------------------------
   # --------------------------------------------
   influxdb:
+    env_file:
+      - .env
     image: influxdb:2.1.1
     networks:
       - net-test
     volumes:
       - influxdb-storage:/var/lib/influxdb2:rw
-    env_file:
-      - .env
+    #env_file:
+    # - .env
     entrypoint: ["./entrypoint.sh"]
     restart: on-failure:10
     ports:
       - ${DOCKER_INFLUXDB_INIT_PORT}:8086
 
   # --------------------------------------------
-  # TELEGRAF --------------------------------------------
-  # --------------------------------------------
-  telegraf:
-    image: telegraf:1.19
-    networks:
-      - net-test
-    volumes:
-      - ${TELEGRAF_CFG_PATH}:/etc/telegraf/telegraf.conf:rw
-    env_file:
-      - .env
-    depends_on:
-      - influxdb
-
-  # --------------------------------------------
   # GRAFANA -----------------------------------
   # --------------------------------------------
   grafana:
+    env_file:
+      - .env
     image: grafana/grafana-oss:8.4.3
     networks:
       - net-test
@@ -118,4 +88,3 @@ networks:
 volumes:
   grafana-storage:
   influxdb-storage:
-
