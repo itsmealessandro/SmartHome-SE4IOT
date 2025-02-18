@@ -80,6 +80,21 @@ services:
     depends_on:
       - broker
       - nodered
+    volumes:
+      - ./simulated_env:/simulated_env
+
+
+  # Actuators
+  actuators:
+    build: ./actuators/
+    hostname: actuatorsName
+    networks:
+      - net-test
+    depends_on:
+      - broker
+      - nodered
+    volumes:
+      - ./simulated_env:/simulated_env
 
 networks:
   net-test:
@@ -88,3 +103,4 @@ networks:
 volumes:
   grafana-storage:
   influxdb-storage:
+  simulated_env:
