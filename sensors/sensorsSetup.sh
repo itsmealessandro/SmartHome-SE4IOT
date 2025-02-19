@@ -21,13 +21,13 @@ PID1=$!
 echo $PID1
 
 echo -e "\e[1;33m Activating Livingroom Temperature Sensor \e[0m"
-java -cp ".:$LIBRARY_PATH" CreateSensor SmartHome/livingRoom/temperature s2 &
+java -cp ".:$LIBRARY_PATH" CreateSensor SmartHome/livingroom/temperature s2 &
 
 PID2=$!
 echo $PID2
 
 echo -e "\e[1;33m Activating Livingroom Light Sensor \e[0m"
-java -cp ".:$LIBRARY_PATH" CreateSensor SmartHome/livingRoom/light s3 &
+java -cp ".:$LIBRARY_PATH" CreateSensor SmartHome/livingroom/light s3 &
 
 PID3=$!
 echo $PID3

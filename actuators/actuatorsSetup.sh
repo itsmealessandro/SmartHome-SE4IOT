@@ -22,13 +22,13 @@ PID1=$!
 echo $PID1
 
 echo -e "\e[1;33m Activating Livingroom temperatureAct actuator \e[0m"
-java -cp ".:$LIBRARY_PATH" CreateActuator SmartHome/livingRoom/temperatureAct 2 &
+java -cp ".:$LIBRARY_PATH" CreateActuator SmartHome/livingroom/temperatureAct 2 &
 
 PID2=$!
 echo $PID2
 
 echo -e "\e[1;33m Activating Livingroom lightAct actuator \e[0m"
-java -cp ".:$LIBRARY_PATH" CreateActuator SmartHome/livingRoom/lightAct 3 &
+java -cp ".:$LIBRARY_PATH" CreateActuator SmartHome/livingroom/lightAct 3 &
 
 PID3=$!
 echo $PID3

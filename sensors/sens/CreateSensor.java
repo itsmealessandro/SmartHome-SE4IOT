@@ -54,33 +54,6 @@ public class CreateSensor {
         // System.out.println("---------------- TEST --------------");
         // System.out.println("---------------- TEST --------------");
 
-        String content = null;
-        Random random = new Random();
-        // 5% probability to trigger alarm
-        int alertProb = random.nextInt(0, 100);
-        if (alertProb <= 5) {
-
-          // System.out.println("------------------------------------------------------------");
-          System.out.println(ANSI_RED + " ALERT VALUE sensor:" + args[0]);
-          // System.out.println("------------------------------------------------------------");
-          content = String.valueOf(random.nextInt(6, 10));
-
-        } else {
-          // System.out.println("------------------------------------------------------------");
-          // System.out.println(" normal VALUE sens1");
-          // System.out.println("------------------------------------------------------------");
-          content = String.valueOf(random.nextInt(5));
-        }
-
-        Thread.sleep(500);
-
-        MqttMessage message = new MqttMessage(content.getBytes());
-
-        // System.out.println("Publishing message: " + content);
-        message.setQos(qos);
-        sampleClient.publish(topic, message);
-        // System.out.println("Message published");
-
         // NOTE: JSON
 
         // Creazione del mapper JSON
@@ -102,13 +75,40 @@ public class CreateSensor {
 
         int value = room.get(splittedTopic[2]).asInt();
 
-        System.out.println("---------------- env data begin --------------");
+        // System.out.println("---------------- env data begin --------------");
+        //
+        // System.out.println("room:" + splittedTopic[1]);
+        // System.out.println("data:" + splittedTopic[2]);
+        // System.out.println("value:" + value);
+        //
+        // System.out.println("---------------- env data end --------------");
 
-        System.out.println("room:" + splittedTopic[1]);
-        System.out.println("data:" + splittedTopic[2]);
-        System.out.println("value:" + value);
+        String content = null;
+        Random random = new Random();
+        // 5% probability to trigger alarm
+        int alertProb = random.nextInt(0, 100);
+        if (alertProb <= 5) {
 
-        System.out.println("---------------- env data end --------------");
+          // System.out.println("------------------------------------------------------------");
+          System.out.println(ANSI_RED + " ALERT VALUE sensor:" + args[0]);
+          // System.out.println("------------------------------------------------------------");
+          content = String.valueOf(random.nextInt(6, 10));
+
+        } else {
+          // System.out.println("------------------------------------------------------------");
+          // System.out.println(" normal VALUE sens1");
+          // System.out.println("------------------------------------------------------------");
+          content = String.valueOf(value);
+        }
+
+        Thread.sleep(500);
+
+        MqttMessage message = new MqttMessage(content.getBytes());
+
+        // System.out.println("Publishing message: " + content);
+        message.setQos(qos);
+        sampleClient.publish(topic, message);
+        // System.out.println("Message published");
 
       }
 
