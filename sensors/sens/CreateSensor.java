@@ -5,7 +5,12 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.util.Random;
 
-public class DynamicSensor {
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+
+public class CreateSensor {
 
   public static void main(String[] args) {
 
@@ -69,6 +74,34 @@ public class DynamicSensor {
         sampleClient.publish(topic, message);
         // System.out.println("Message published");
 
+        // NOTE: JSON
+
+        // Creazione del mapper JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        File jsonFile = new File("/simulated_env/env.json");
+        if (!jsonFile.exists()) {
+          System.out.println("Errore: Il file JSON " + jsonFile.getAbsolutePath() + " non esiste.");
+          return;
+        }
+
+        // Lettura del file JSON
+        JsonNode rootNode = objectMapper.readTree(jsonFile);
+
+        // Navigazione nel JSON
+        JsonNode bedroom = rootNode.get("bedroom");
+        JsonNode livingroom = rootNode.get("livingroom");
+
+        int bedroomLight = bedroom.get("light").asInt();
+        int bedroomTemp = bedroom.get("temperature").asInt();
+
+        int livingroomLight = livingroom.get("light").asInt();
+        int livingroomTemp = livingroom.get("temperature").asInt();
+
+        // Stampa dei valori
+        System.out.println("Bedroom - Light: " + bedroomLight + ", Temperature: " + bedroomTemp);
+        System.out.println("Livingroom - Light: " + livingroomLight + ", Temperature: " + livingroomTemp);
+
       }
 
       // Disconnecting
@@ -84,11 +117,10 @@ public class DynamicSensor {
       // System.out.println("excep " + me);
       me.printStackTrace();
       System.exit(1);
-    } catch (InterruptedException i) {
+    } catch (InterruptedException | IOException e) {
       // System.out.println("time exeption");
-      i.printStackTrace();
+      e.printStackTrace();
       System.exit(1);
-
     }
   }
 }

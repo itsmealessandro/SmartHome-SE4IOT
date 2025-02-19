@@ -7,64 +7,38 @@ cd ./sens/
 
 ls
 
-#compiling
+# Definire la variabile classpath per evitare ripetizioni
+LIBRARY_PATH="org.eclipse.paho.client.mqttv3-1.2.0.jar:jackson-core-2.18.2.jar:jackson-databind-2.18.2.jar:jackson-annotations-2.18.2.jar"
+
+# Compilazione
 echo -e "\e[1;33m compiling sensors \e[0m"
-javac -cp ./org.eclipse.paho.client.mqttv3-1.2.0.jar ./DynamicSensor.java
+javac -cp "$LIBRARY_PATH" ./CreateSensor.java
 
 echo -e "\e[1;33m Activating BedRoom Light Sensor \e[0m"
-java -cp .:./org.eclipse.paho.client.mqttv3-1.2.0.jar DynamicSensor SmartHome/bedroom/light 1 &
+java -cp ".:$LIBRARY_PATH" CreateSensor SmartHome/bedroom/light s1 &
 
 PID1=$!
 echo $PID1
 
 echo -e "\e[1;33m Activating Livingroom Temperature Sensor \e[0m"
-java -cp .:./org.eclipse.paho.client.mqttv3-1.2.0.jar DynamicSensor SmartHome/livingRoom/temperature 2 &
+java -cp ".:$LIBRARY_PATH" CreateSensor SmartHome/livingRoom/temperature s2 &
 
 PID2=$!
 echo $PID2
 
 echo -e "\e[1;33m Activating Livingroom Light Sensor \e[0m"
-java -cp .:./org.eclipse.paho.client.mqttv3-1.2.0.jar DynamicSensor SmartHome/livingRoom/light 3 &
+java -cp ".:$LIBRARY_PATH" CreateSensor SmartHome/livingRoom/light s3 &
 
 PID3=$!
 echo $PID3
 
 echo -e "\e[1;33m Activating BedRoom Temperature Sensor \e[0m"
-java -cp .:./org.eclipse.paho.client.mqttv3-1.2.0.jar DynamicSensor SmartHome/bedroom/temperature 4 &
+java -cp ".:$LIBRARY_PATH" CreateSensor SmartHome/bedroom/temperature s4 &
 
 PID4=$!
 echo $PID4
 
-#echo -e "\e[1;33m Activating test sensor \e[0m"
-#echo "---------------------------------------------------------------------"
-#java -cp ./org.eclipse.paho.client.mqttv3-1.2.0.jar ./MyclientSample.java &
-#PID1=$!
-#
-#echo -e "\e[1;33m Activating Livingroom Temperature Sensor \e[0m"
-#echo "---------------------------------------------------------------------"
-#java -cp ./org.eclipse.paho.client.mqttv3-1.2.0.jar ./SensLivTemp.java &
-#PID2=$!
-#
-#echo -e "\e[1;33m Activating BedRoom Temperature Sensor \e[0m"
-#echo "---------------------------------------------------------------------"
-#java -cp ./org.eclipse.paho.client.mqttv3-1.2.0.jar ./SensBedTemp.java &
-#PID3=$!
-#
-#echo -e "\e[1;33m Activating Livingroom Light Sensor \e[0m"
-#echo "---------------------------------------------------------------------"
-#java -cp ./org.eclipse.paho.client.mqttv3-1.2.0.jar ./SensLivLight.java &
-#PID4=$!
-#
-#echo -e "\e[1;33m Activating Livingroom Light Sensor \e[0m"
-#echo "---------------------------------------------------------------------"
-#java -cp ./org.eclipse.paho.client.mqttv3-1.2.0.jar ./SensBedLight.java &
-#PID5=$!
-#
-#echo "---------------------------------------------------------------------"
-#echo -e "\e[1;33m All sensors activated \e[0m"
-
-# WARNING: Begore shutting down this
-# script and the related container we have to wait that both clients have finished
+# WARNING: Before shutting down this script and the related container, we have to wait that both clients have finished
 wait $PID1 $PID2 $PID3 $PID4
 
 echo -e "\e[1;31m Sensors container script is over \e[0m"
