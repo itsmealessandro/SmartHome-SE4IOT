@@ -46,6 +46,13 @@ public class CreateSensor {
       Thread.sleep(2000);
 
       while (active) {
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
 
         String content = null;
         Random random = new Random();
@@ -85,22 +92,23 @@ public class CreateSensor {
           return;
         }
 
+        String[] splittedTopic = topic.split("/");
+
         // Lettura del file JSON
         JsonNode rootNode = objectMapper.readTree(jsonFile);
 
         // Navigazione nel JSON
-        JsonNode bedroom = rootNode.get("bedroom");
-        JsonNode livingroom = rootNode.get("livingroom");
+        JsonNode room = rootNode.get(splittedTopic[1]);
 
-        int bedroomLight = bedroom.get("light").asInt();
-        int bedroomTemp = bedroom.get("temperature").asInt();
+        int value = room.get(splittedTopic[2]).asInt();
 
-        int livingroomLight = livingroom.get("light").asInt();
-        int livingroomTemp = livingroom.get("temperature").asInt();
+        System.out.println("---------------- env data begin --------------");
 
-        // Stampa dei valori
-        System.out.println("Bedroom - Light: " + bedroomLight + ", Temperature: " + bedroomTemp);
-        System.out.println("Livingroom - Light: " + livingroomLight + ", Temperature: " + livingroomTemp);
+        System.out.println("room:" + splittedTopic[1]);
+        System.out.println("data:" + splittedTopic[2]);
+        System.out.println("value:" + value);
+
+        System.out.println("---------------- env data end --------------");
 
       }
 
