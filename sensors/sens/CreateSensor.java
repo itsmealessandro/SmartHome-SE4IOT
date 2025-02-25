@@ -5,7 +5,12 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.util.Random;
 
-public class DynamicSensor {
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+
+public class CreateSensor {
 
   public static void main(String[] args) {
 
@@ -41,6 +46,42 @@ public class DynamicSensor {
       Thread.sleep(2000);
 
       while (active) {
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+        // System.out.println("---------------- TEST --------------");
+
+        // NOTE: JSON
+
+        // Creazione del mapper JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        File jsonFile = new File("/simulated_env/env.json");
+        if (!jsonFile.exists()) {
+          System.out.println("Errore: Il file JSON " + jsonFile.getAbsolutePath() + " non esiste.");
+          return;
+        }
+
+        String[] splittedTopic = topic.split("/");
+
+        // Lettura del file JSON
+        JsonNode rootNode = objectMapper.readTree(jsonFile);
+
+        // Navigazione nel JSON
+        JsonNode room = rootNode.get(splittedTopic[1]);
+
+        int value = room.get(splittedTopic[2]).asInt();
+
+        // System.out.println("---------------- env data begin --------------");
+        //
+        // System.out.println("room:" + splittedTopic[1]);
+        // System.out.println("data:" + splittedTopic[2]);
+        // System.out.println("value:" + value);
+        //
+        // System.out.println("---------------- env data end --------------");
 
         String content = null;
         Random random = new Random();
@@ -57,7 +98,7 @@ public class DynamicSensor {
           // System.out.println("------------------------------------------------------------");
           // System.out.println(" normal VALUE sens1");
           // System.out.println("------------------------------------------------------------");
-          content = String.valueOf(random.nextInt(5));
+          content = String.valueOf(value);
         }
 
         Thread.sleep(500);
@@ -84,11 +125,10 @@ public class DynamicSensor {
       // System.out.println("excep " + me);
       me.printStackTrace();
       System.exit(1);
-    } catch (InterruptedException i) {
+    } catch (InterruptedException | IOException e) {
       // System.out.println("time exeption");
-      i.printStackTrace();
+      e.printStackTrace();
       System.exit(1);
-
     }
   }
 }
