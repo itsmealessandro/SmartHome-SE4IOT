@@ -13,7 +13,13 @@ LIBRARY_PATH="org.eclipse.paho.client.mqttv3-1.2.0.jar:jackson-core-2.18.2.jar:j
 
 # Compilazione
 echo -e "\e[1;33m compiling actuators \e[0m"
-javac -cp "$LIBRARY_PATH" CreateActuator.java a a
+javac -cp "$LIBRARY_PATH" CreateActuator.java
+
+if [ $? -eq 0 ]; then
+  echo "Compiled"
+else
+  echo "Compilation Error"
+fi
 
 echo -e "\e[1;33m Activating BedRoom lightAct actuator \e[0m"
 java -cp ".:$LIBRARY_PATH" CreateActuator SmartHome/bedroom/lightAct 1 &
