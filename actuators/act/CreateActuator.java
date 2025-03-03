@@ -1,6 +1,3 @@
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.*;
 
@@ -12,7 +9,6 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class CreateActuator {
-  private String topic;
 
   public static void main(String[] args) {
 
@@ -20,6 +16,9 @@ public class CreateActuator {
       System.out.println("Usage: java CreateActuator <topic> <clientId>");
       return;
     }
+
+    String topic = args[0];
+    String clientId = args[1];
 
     final String ANSI_RESET = "\u001B[0m";
     final String ANSI_BLACK = "\u001B[30m";
@@ -31,8 +30,6 @@ public class CreateActuator {
     final String ANSI_CYAN = "\u001B[36m";
     final String ANSI_WHITE = "\u001B[37m";
 
-    String topic = args[0];
-    String clientId = args[1];
     int qos = 1;
     String broker = "tcp://broker:1883";
     MemoryPersistence persistence = new MemoryPersistence();
@@ -58,6 +55,12 @@ public class CreateActuator {
         public void messageArrived(String topic, MqttMessage message) {
           System.out.println(ANSI_GREEN + "Message recived from my topic: " + topic);
           System.out.println(ANSI_GREEN + "Message value: " + message);
+          try {
+            overrideEnv(message.toString(), topic);
+          } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(ANSI_RED + "nooooooooooooooooooooooooooooooooooooooooo");
+          }
           System.out.println(ANSI_GREEN + "Overriding environment data");
 
         }
@@ -92,33 +95,53 @@ public class CreateActuator {
     }
   }
 
-  void overrideEnv() throws IOException {
+  public static void overrideEnv(String arrived_msg, String topic) throws IOException {
 
-    String[] splittedTopic = this.topic.split("/");
+    try {
 
-    // NOTE: JSON
+      String[] splittedTopic = topic.split("/");
 
-    // Creazione del mapper JSON
-    ObjectMapper objectMapper = new ObjectMapper();
+      // NOTE: JSON
 
-    File jsonFile = new File("/simulated_env/env.json");
-    if (!jsonFile.exists()) {
-      System.out.println("Errore: Il file JSON " + jsonFile.getAbsolutePath() + " non esiste.");
-      return;
+      // Creazione del mapper JSON
+      ObjectMapper objectMapper = new ObjectMapper();
+
+      File jsonFile = new File("/simulated_env/env.json");
+      if (!jsonFile.exists()) {
+        System.out.println("Errore: Il file JSON " + jsonFile.getAbsolutePath() + " non esiste.");
+        return;
+      }
+      // Lettura del file JSON
+      JsonNode rootNode = objectMapper.readTree(jsonFile);
+
+      String textRoom = splittedTopic[1];
+      System.out.println("room: " + splittedTopic[1]);
+      // WARNING: the topic is *Act because it repersent the actuator, so we need to
+      // remove the last 3 characters.
+      String textSensAct = splittedTopic[2];
+      String textSens = textSensAct.replace("Act", "");
+      System.out.println("sens: " + splittedTopic[2]);
+
+      JsonNode room = rootNode.get(textRoom);
+      JsonNode sensNode = room.get(textSens);
+
+      if (sensNode != null) {
+        System.out.println("value is not null -> modifing");
+        ((ObjectNode) room).put(textSens, arrived_msg);
+      } else {
+        System.out.println("value is null");
+      }
+
+      // Scrittura del file JSON aggiornato
+      objectMapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, rootNode);
+      // Rilettura del file JSON per la stampa
+      String updatedJson = objectMapper.readTree(jsonFile).toPrettyString();
+      System.out.println(updatedJson);
+
+    } catch (IOException e) {
+      System.out.println("IO Exception");
+      e.printStackTrace();
+      System.exit(1);
     }
-    // Lettura del file JSON
-    JsonNode rootNode = objectMapper.readTree(jsonFile);
-
-    // Navigazione nel JSON per arrivare alla stanza 'bedroom' e alla luce
-    JsonNode room = rootNode.get(splittedTopic[1]); // 'bedroom'
-    JsonNode sensNode = room.get(splittedTopic[2]);
-
-    // Modifica del valore della luce (ad esempio, accendere la luce)
-    if (sensNode != null) {
-      ((ObjectNode) room).put(splittedTopic[2], 1); // Modifica il valore della luce (esempio: true per accesa)
-    }
-
-    // Scrittura del file JSON aggiornato
-    objectMapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, rootNode);
   }
 }
