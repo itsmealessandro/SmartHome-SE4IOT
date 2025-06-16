@@ -20,7 +20,7 @@ services:
           - shared-data:/data
 
   client:
-    image: ubuntu:latest
+    image: alpine:latest
     build: ./clientMqtt/
     networks:
           - nodered-mosquitto

@@ -1,0 +1,52 @@
+# Usa l'immagine ufficiale di Grafana come base.
+# Questo ti fornisce un'installazione funzionante di Grafana.
+FROM grafana/grafana:11.4.0
+
+# Passa all'utente root per poter installare pacchetti e gestire i permessi.
+USER root
+
+# Aggiorna l'indice dei pacchetti e installa Python 3, py3-pip e python3-dev (per compilare alcune dipendenze Python)
+# 'py3-virtualenv' è utile se vuoi creare ambienti virtuali Python.
+# Il comando 'ln -sf python3 /usr/bin/python' crea un link simbolico per usare 'python' invece di 'python3'.
+RUN apk update && apk add --no-cache \
+    python3 \
+    py3-pip \
+    python3-dev \
+    py3-virtualenv && \
+    ln -sf python3 /usr/bin/python
+
+# Crea un ambiente virtuale Python nella directory /opt/venv.
+# Questo isola le dipendenze Python del tuo script dal sistema globale.
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip
+
+# Aggiungi il percorso dell'ambiente virtuale alla variabile d'ambiente PATH.
+# Questo fa sì che quando esegui 'python' o 'pip', venga usato l'eseguibile dall'ambiente virtuale.
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Imposta la working directory all'interno del container.
+# Tutti i comandi successivi (COPY, RUN) saranno eseguiti da questa directory.
+WORKDIR /app
+
+# Copia i file della tua applicazione (inclusi gli script Python e i file di configurazione)
+# dalla directory 'app/' della tua macchina host alla directory '/app' nel container.
+COPY app/ /app/
+
+# Copia il file requirements.txt, che elenca le dipendenze Python del tuo script.
+COPY requirements.txt /app/
+
+# Installa le dipendenze Python specificate nel requirements.txt all'interno dell'ambiente virtuale.
+# '--no-cache-dir' riduce la dimensione finale dell'immagine.
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Torna all'utente 'grafana' per eseguire il servizio Grafana con meno privilegi,
+# una buona pratica di sicurezza.
+USER grafana
+
+# Comando di ingresso (ENTRYPOINT) per il container.
+# Questo comando verrà eseguito quando il container viene avviato.
+# "sh -c" esegue una stringa come comando shell.
+# "python /app/setup_dashboard.py &" esegue il tuo script Python in background.
+# "exec ../run.sh" sostituisce il processo della shell corrente con il comando 'run.sh' di Grafana.
+# Questo assicura che il tuo script venga eseguito e che Grafana si avvii regolarmente.
+ENTRYPOINT ["sh", "-c", "python /app/setup_dashboard.py & exec ../run.sh"]
