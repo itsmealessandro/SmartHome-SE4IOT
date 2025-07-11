@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-    <classpathentry kind="lib" path="org.eclipse.paho.client.mqttv3-1.2.0.jar"/>
-    <classpathentry kind="src" path=""/>
-</classpath>
