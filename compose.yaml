@@ -86,16 +86,16 @@ services:
 
 
   # Actuators
-  actuators:
-    build: ./actuators/
-    hostname: actuatorsName
-    networks:
-      - net-test
-    depends_on:
-      - broker
-      - nodered
-    volumes:
-      - ./simulated_env:/simulated_env
+  # actuators:
+  #   build: ./actuators/
+  #   hostname: actuatorsName
+  #   networks:
+  #     - net-test
+  #   depends_on:
+  #     - broker
+  #     - nodered
+  #   volumes:
+  #     - ./simulated_env:/simulated_env
 
 networks:
   net-test:
