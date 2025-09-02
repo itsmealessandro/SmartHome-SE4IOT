@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # NOTE: Give enough time for Node-RED to activate
 sleep 5

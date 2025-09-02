@@ -1,883 +1,883 @@
 [
-    {
-        "id": "76e4921e87a05a32",
-        "type": "tab",
-        "label": "Flow 1",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "mqttBroker",
-        "type": "mqtt-broker",
-        "name": "MQTT Broker",
-        "broker": "broker",
-        "port": "1883",
-        "clientid": "",
-        "autoConnect": true,
-        "usetls": false,
-        "protocolVersion": "4",
-        "keepalive": "60",
-        "cleansession": true,
-        "autoUnsubscribe": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthPayload": "",
-        "birthMsg": {},
-        "closeTopic": "",
-        "closeQos": "0",
-        "closePayload": "",
-        "closeMsg": {},
-        "willTopic": "",
-        "willQos": "0",
-        "willPayload": "",
-        "willMsg": {},
-        "userProps": "",
-        "sessionExpiry": ""
-    },
-    {
-        "id": "7e2934393ac03b0c",
-        "type": "influxdb",
-        "hostname": "127.0.0.1",
-        "port": 8086,
-        "protocol": "http",
-        "database": "database",
-        "name": "univaq",
-        "usetls": false,
-        "tls": "",
-        "influxdbVersion": "2.0",
-        "url": "http://influxdb:8086",
-        "timeout": 10,
-        "rejectUnauthorized": true
-    },
-    {
-        "id": "mqttInNode",
-        "type": "mqtt in",
-        "z": "76e4921e87a05a32",
-        "name": "MQTT Input",
-        "topic": "topicTest",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "mqttBroker",
-        "nl": false,
-        "rap": false,
-        "rh": 0,
-        "inputs": 0,
-        "x": 190,
-        "y": 140,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "32ab7c92513ab7e1",
-        "type": "mqtt in",
-        "z": "76e4921e87a05a32",
-        "name": "livTemp",
-        "topic": "SmartHome/livingRoom/temperature",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "mqttBroker",
-        "nl": false,
-        "rap": false,
-        "rh": 0,
-        "inputs": 0,
-        "x": 190,
-        "y": 280,
-        "wires": [
-            [
-                "3255fb950199033f",
-                "0fe6921a486410a4"
-            ]
-        ]
-    },
-    {
-        "id": "ddb1cba5cc2fcff1",
-        "type": "http request",
-        "z": "76e4921e87a05a32",
-        "name": "tgbot alert",
-        "method": "POST",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [
-            {
-                "keyType": "other",
-                "keyValue": "",
-                "valueType": "other",
-                "valueValue": ""
-            }
-        ],
-        "x": 1660,
-        "y": 420,
-        "wires": [
-            [
-                "51b437a80f1c641d"
-            ]
-        ]
-    },
-    {
-        "id": "26ddd0e43536d9b4",
-        "type": "inject",
-        "z": "76e4921e87a05a32",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "1",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 210,
-        "y": 60,
-        "wires": [
-            [
-                "83e7dbbe33056d07"
-            ]
-        ]
-    },
-    {
-        "id": "34d528bb595484f9",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "debug 1",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 580,
-        "y": 40,
-        "wires": []
-    },
-    {
-        "id": "83e7dbbe33056d07",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "function 2",
-        "func": "msg.payload = env.get(\"TG_CHAT_ID\") + \" \" + env.get(\"TGBOT_TOKEN\");\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 60,
-        "wires": [
-            [
-                "34d528bb595484f9"
-            ]
-        ]
-    },
-    {
-        "id": "b1465d6f93c0de3a",
-        "type": "influxdb out",
-        "z": "76e4921e87a05a32",
-        "influxdb": "7e2934393ac03b0c",
-        "name": "influx tempLiv",
-        "measurement": "temp_liv",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "univaq",
-        "bucket": "smart_home_iot",
-        "x": 940,
-        "y": 160,
-        "wires": []
-    },
-    {
-        "id": "8167e4f8183fc413",
-        "type": "mqtt in",
-        "z": "76e4921e87a05a32",
-        "name": "bedTemp",
-        "topic": "SmartHome/bedroom/temperature",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "mqttBroker",
-        "nl": false,
-        "rap": false,
-        "rh": 0,
-        "inputs": 0,
-        "x": 200,
-        "y": 380,
-        "wires": [
-            [
-                "9c00ce625ea65f38",
-                "0fe6921a486410a4"
-            ]
-        ]
-    },
-    {
-        "id": "48e209bea246f2fe",
-        "type": "mqtt in",
-        "z": "76e4921e87a05a32",
-        "name": "livLight",
-        "topic": "SmartHome/livingRoom/light",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "mqttBroker",
-        "nl": false,
-        "rap": false,
-        "rh": 0,
-        "inputs": 0,
-        "x": 150,
-        "y": 600,
-        "wires": [
-            [
-                "e58b6cfeca6b2c12",
-                "0fe6921a486410a4"
-            ]
-        ]
-    },
-    {
-        "id": "625f726eabfccb88",
-        "type": "mqtt in",
-        "z": "76e4921e87a05a32",
-        "name": "bedLight",
-        "topic": "SmartHome/bedroom/light",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "mqttBroker",
-        "nl": false,
-        "rap": false,
-        "rh": 0,
-        "inputs": 0,
-        "x": 160,
-        "y": 760,
-        "wires": [
-            [
-                "9b06fda8c2476965",
-                "0fe6921a486410a4"
-            ]
-        ]
-    },
-    {
-        "id": "3255fb950199033f",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "JSON converter",
-        "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"temperature\",\n    value: val  \n};\n\n\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 540,
-        "y": 280,
-        "wires": [
-            [
-                "2c77131cb18dc3a8",
-                "ebfd701fe6506fd9"
-            ]
-        ]
-    },
-    {
-        "id": "9c00ce625ea65f38",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "JSON converter",
-        "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"bedroom\",\n    sensor: \"temperature\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 540,
-        "y": 380,
-        "wires": [
-            [
-                "f4db77a843796db9",
-                "ebfd701fe6506fd9"
-            ]
-        ]
-    },
-    {
-        "id": "369060609f013492",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "send alert",
-        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nvar chatID = env.get(\"TG_CHAT_ID\");\nvar token = env.get(\"TGBOT_TOKEN\");\nmsg.url = \"https://api.telegram.org/bot\" + token + \"/sendMessage\";\n\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\"\n};\n\nmsg.payload = JSON.stringify({\n    chat_id: chatID,\n    text:\n        \"Domain: SmartHome\\n\" +\n        \"Location: \" + place + \"\\n\" +\n        \"Sensor: \" + sens + \"\\n\" +\n        \"Condition: Exceeded max value\"\n});\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1340,
-        "y": 420,
-        "wires": [
-            [
-                "ddb1cba5cc2fcff1",
-                "63e20e0b668699f8"
-            ]
-        ]
-    },
-    {
-        "id": "e58b6cfeca6b2c12",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "JSON converter",
-        "func": "\nlet val = msg.payload;\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 500,
-        "y": 600,
-        "wires": [
-            [
-                "91a8585d21109f84",
-                "d25bdeec47b39ed2"
-            ]
-        ]
-    },
-    {
-        "id": "91a8585d21109f84",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "Light check",
-        "func": "var value = msg.payload.value\n\nif(value > global.get(\"Lthreshold\")){\n\nreturn msg;\n}\n    \n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1050,
-        "y": 660,
-        "wires": [
-            [
-                "369060609f013492"
-            ]
-        ]
-    },
-    {
-        "id": "9b06fda8c2476965",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "JSON converter",
-        "func": "\nlet val = msg.payload;\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 500,
-        "y": 760,
-        "wires": [
-            [
-                "91a8585d21109f84",
-                "5bdc724efb391ce4"
-            ]
-        ]
-    },
-    {
-        "id": "0fe6921a486410a4",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug MQTT",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 460,
-        "y": 440,
-        "wires": []
-    },
-    {
-        "id": "1500b7b6820595b5",
-        "type": "mqtt in",
-        "z": "76e4921e87a05a32",
-        "name": "Get Threshold",
-        "topic": "temperature/threshold",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "mqttBroker",
-        "nl": false,
-        "rap": false,
-        "rh": 0,
-        "inputs": 0,
-        "x": 190,
-        "y": 1220,
-        "wires": [
-            [
-                "05c9a11d17c44491"
-            ]
-        ]
-    },
-    {
-        "id": "1c8ad30cd8fb4fbb",
-        "type": "mqtt out",
-        "z": "76e4921e87a05a32",
-        "name": "Temp threshold",
-        "topic": "temperature/threshold",
-        "qos": "2",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "mqttBroker",
-        "x": 680,
-        "y": 1280,
-        "wires": []
-    },
-    {
-        "id": "05c9a11d17c44491",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "set threshold",
-        "func": "var threshold_value = msg.payload\nglobal.set(\"threshold\",threshold_value);\nmsg.payload = \"threshold set to:\" + threshold_value;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 450,
-        "y": 1220,
-        "wires": [
-            [
-                "7fd76f0345491f38"
-            ]
-        ]
-    },
-    {
-        "id": "7fd76f0345491f38",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug threshold",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 680,
-        "y": 1220,
-        "wires": []
-    },
-    {
-        "id": "537f0d14f0763a0f",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "threshold value",
-        "func": "msg.payload = 20\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 460,
-        "y": 1280,
-        "wires": [
-            [
-                "1c8ad30cd8fb4fbb"
-            ]
-        ]
-    },
-    {
-        "id": "acfbe19e2c380baa",
-        "type": "inject",
-        "z": "76e4921e87a05a32",
-        "name": "activate threshold",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "10",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 230,
-        "y": 1280,
-        "wires": [
-            [
-                "537f0d14f0763a0f",
-                "7d0bd14992733c01"
-            ]
-        ]
-    },
-    {
-        "id": "7d0bd14992733c01",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug threshold",
-        "active": false,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 470,
-        "y": 1340,
-        "wires": []
-    },
-    {
-        "id": "4e032a53e645f15d",
-        "type": "mqtt in",
-        "z": "76e4921e87a05a32",
-        "name": "Get Threshold",
-        "topic": "light/threshold",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "mqttBroker",
-        "nl": false,
-        "rap": false,
-        "rh": 0,
-        "inputs": 0,
-        "x": 190,
-        "y": 1440,
-        "wires": [
-            [
-                "d8667e3e150d3bcd"
-            ]
-        ]
-    },
-    {
-        "id": "072be305d7dbd932",
-        "type": "mqtt out",
-        "z": "76e4921e87a05a32",
-        "name": "Light threshold",
-        "topic": "light/threshold",
-        "qos": "2",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "mqttBroker",
-        "x": 680,
-        "y": 1500,
-        "wires": []
-    },
-    {
-        "id": "d8667e3e150d3bcd",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "set threshold",
-        "func": "var threshold_value = msg.payload\nglobal.set(\"Lthreshold\",threshold_value);\nmsg.payload = \"Lthreshold set to:\" + threshold_value;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 450,
-        "y": 1440,
-        "wires": [
-            [
-                "cbb5b3db72e75f8d"
-            ]
-        ]
-    },
-    {
-        "id": "cbb5b3db72e75f8d",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug threshold",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 680,
-        "y": 1440,
-        "wires": []
-    },
-    {
-        "id": "02a06790660f1a34",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "threshold value",
-        "func": "msg.payload = 5\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 460,
-        "y": 1500,
-        "wires": [
-            [
-                "072be305d7dbd932"
-            ]
-        ]
-    },
-    {
-        "id": "b976ba14b1fc5626",
-        "type": "inject",
-        "z": "76e4921e87a05a32",
-        "name": "activate threshold",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "10",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 230,
-        "y": 1500,
-        "wires": [
-            [
-                "02a06790660f1a34",
-                "89b7a86afde64373"
-            ]
-        ]
-    },
-    {
-        "id": "89b7a86afde64373",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "Debug threshold",
-        "active": false,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 470,
-        "y": 1560,
-        "wires": []
-    },
-    {
-        "id": "c5f7ab95ea2a75e1",
-        "type": "influxdb out",
-        "z": "76e4921e87a05a32",
-        "influxdb": "7e2934393ac03b0c",
-        "name": "influx LightBed",
-        "measurement": "light_bed",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "univaq",
-        "bucket": "smart_home_iot",
-        "x": 860,
-        "y": 820,
-        "wires": []
-    },
-    {
-        "id": "cc30f2e3544c46ad",
-        "type": "influxdb out",
-        "z": "76e4921e87a05a32",
-        "influxdb": "7e2934393ac03b0c",
-        "name": "influx lightLiv",
-        "measurement": "light_liv",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "univaq",
-        "bucket": "smart_home_iot",
-        "x": 870,
-        "y": 560,
-        "wires": []
-    },
-    {
-        "id": "3bb32a288ef54e05",
-        "type": "influxdb out",
-        "z": "76e4921e87a05a32",
-        "influxdb": "7e2934393ac03b0c",
-        "name": "influx tempBed",
-        "measurement": "temp_bed",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "univaq",
-        "bucket": "smart_home_iot",
-        "x": 860,
-        "y": 460,
-        "wires": []
-    },
-    {
-        "id": "f4db77a843796db9",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "into influx",
-        "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 680,
-        "y": 460,
-        "wires": [
-            [
-                "3bb32a288ef54e05"
-            ]
-        ]
-    },
-    {
-        "id": "63e20e0b668699f8",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "bot",
-        "active": true,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1510,
-        "y": 300,
-        "wires": []
-    },
-    {
-        "id": "2c77131cb18dc3a8",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "into influx",
-        "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 700,
-        "y": 200,
-        "wires": [
-            [
-                "b1465d6f93c0de3a"
-            ]
-        ]
-    },
-    {
-        "id": "d25bdeec47b39ed2",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "into influx",
-        "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 680,
-        "y": 560,
-        "wires": [
-            [
-                "cc30f2e3544c46ad"
-            ]
-        ]
-    },
-    {
-        "id": "5bdc724efb391ce4",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "into influx",
-        "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 680,
-        "y": 820,
-        "wires": [
-            [
-                "c5f7ab95ea2a75e1"
-            ]
-        ]
-    },
-    {
-        "id": "51b437a80f1c641d",
-        "type": "debug",
-        "z": "76e4921e87a05a32",
-        "name": "response",
-        "active": true,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1850,
-        "y": 420,
-        "wires": []
-    },
-    {
-        "id": "ebfd701fe6506fd9",
-        "type": "function",
-        "z": "76e4921e87a05a32",
-        "name": "temperature check",
-        "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\n\nreturn msg;\n\n}\n    \n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 950,
-        "y": 320,
-        "wires": [
-            [
-                "369060609f013492"
-            ]
-        ]
-    }
+  {
+    "id": "76e4921e87a05a32",
+    "type": "tab",
+    "label": "Flow 1",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "mqttBroker",
+    "type": "mqtt-broker",
+    "name": "MQTT Broker",
+    "broker": "broker",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  },
+  {
+    "id": "7e2934393ac03b0c",
+    "type": "influxdb",
+    "hostname": "127.0.0.1",
+    "port": 8086,
+    "protocol": "http",
+    "database": "database",
+    "name": "univaq",
+    "usetls": false,
+    "tls": "",
+    "influxdbVersion": "2.0",
+    "url": "http://influxdb:8086",
+    "timeout": 10,
+    "rejectUnauthorized": true
+  },
+  {
+    "id": "mqttInNode",
+    "type": "mqtt in",
+    "z": "76e4921e87a05a32",
+    "name": "MQTT Input",
+    "topic": "topicTest",
+    "qos": "2",
+    "datatype": "auto-detect",
+    "broker": "mqttBroker",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0,
+    "x": 190,
+    "y": 140,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "32ab7c92513ab7e1",
+    "type": "mqtt in",
+    "z": "76e4921e87a05a32",
+    "name": "livTemp",
+    "topic": "SmartHome/livingroom/temperature",
+    "qos": "2",
+    "datatype": "auto-detect",
+    "broker": "mqttBroker",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0,
+    "x": 190,
+    "y": 280,
+    "wires": [
+      [
+        "3255fb950199033f",
+        "0fe6921a486410a4"
+      ]
+    ]
+  },
+  {
+    "id": "ddb1cba5cc2fcff1",
+    "type": "http request",
+    "z": "76e4921e87a05a32",
+    "name": "tgbot alert",
+    "method": "POST",
+    "ret": "txt",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": [
+      {
+        "keyType": "other",
+        "keyValue": "",
+        "valueType": "other",
+        "valueValue": ""
+      }
+    ],
+    "x": 1660,
+    "y": 420,
+    "wires": [
+      [
+        "51b437a80f1c641d"
+      ]
+    ]
+  },
+  {
+    "id": "26ddd0e43536d9b4",
+    "type": "inject",
+    "z": "76e4921e87a05a32",
+    "name": "",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "1",
+    "crontab": "",
+    "once": true,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 210,
+    "y": 60,
+    "wires": [
+      [
+        "83e7dbbe33056d07"
+      ]
+    ]
+  },
+  {
+    "id": "34d528bb595484f9",
+    "type": "debug",
+    "z": "76e4921e87a05a32",
+    "name": "debug 1",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 580,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "83e7dbbe33056d07",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "function 2",
+    "func": "msg.payload = env.get(\"TG_CHAT_ID\") + \" \" + env.get(\"TGBOT_TOKEN\");\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 380,
+    "y": 60,
+    "wires": [
+      [
+        "34d528bb595484f9"
+      ]
+    ]
+  },
+  {
+    "id": "b1465d6f93c0de3a",
+    "type": "influxdb out",
+    "z": "76e4921e87a05a32",
+    "influxdb": "7e2934393ac03b0c",
+    "name": "influx tempLiv",
+    "measurement": "temp_liv",
+    "precision": "",
+    "retentionPolicy": "",
+    "database": "database",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "univaq",
+    "bucket": "smart_home_iot",
+    "x": 940,
+    "y": 160,
+    "wires": []
+  },
+  {
+    "id": "8167e4f8183fc413",
+    "type": "mqtt in",
+    "z": "76e4921e87a05a32",
+    "name": "bedTemp",
+    "topic": "SmartHome/bedroom/temperature",
+    "qos": "2",
+    "datatype": "auto-detect",
+    "broker": "mqttBroker",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0,
+    "x": 200,
+    "y": 380,
+    "wires": [
+      [
+        "9c00ce625ea65f38",
+        "0fe6921a486410a4"
+      ]
+    ]
+  },
+  {
+    "id": "48e209bea246f2fe",
+    "type": "mqtt in",
+    "z": "76e4921e87a05a32",
+    "name": "livLight",
+    "topic": "SmartHome/livingroom/light",
+    "qos": "2",
+    "datatype": "auto-detect",
+    "broker": "mqttBroker",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0,
+    "x": 150,
+    "y": 600,
+    "wires": [
+      [
+        "e58b6cfeca6b2c12",
+        "0fe6921a486410a4"
+      ]
+    ]
+  },
+  {
+    "id": "625f726eabfccb88",
+    "type": "mqtt in",
+    "z": "76e4921e87a05a32",
+    "name": "bedLight",
+    "topic": "SmartHome/bedroom/light",
+    "qos": "2",
+    "datatype": "auto-detect",
+    "broker": "mqttBroker",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0,
+    "x": 160,
+    "y": 760,
+    "wires": [
+      [
+        "9b06fda8c2476965",
+        "0fe6921a486410a4"
+      ]
+    ]
+  },
+  {
+    "id": "3255fb950199033f",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "JSON converter",
+    "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"temperature\",\n    value: val  \n};\n\n\nreturn msg;\n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 540,
+    "y": 280,
+    "wires": [
+      [
+        "2c77131cb18dc3a8",
+        "ebfd701fe6506fd9"
+      ]
+    ]
+  },
+  {
+    "id": "9c00ce625ea65f38",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "JSON converter",
+    "func": "\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: \"bedroom\",\n    sensor: \"temperature\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 540,
+    "y": 380,
+    "wires": [
+      [
+        "f4db77a843796db9",
+        "ebfd701fe6506fd9"
+      ]
+    ]
+  },
+  {
+    "id": "369060609f013492",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "send alert",
+    "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nvar chatID = env.get(\"TG_CHAT_ID\");\nvar token = env.get(\"TGBOT_TOKEN\");\nmsg.url = \"https://api.telegram.org/bo\" + token + \"/sendMessage\";\n\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\"\n};\n\nmsg.payload = JSON.stringify({\n    chat_id: chatID,\n    text:\n        \"Domain: SmartHome\\n\" +\n        \"Location: \" + place + \"\\n\" +\n        \"Sensor: \" + sens + \"\\n\" +\n        \"Condition: Exceeded max value\"\n});\nreturn msg;\n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1340,
+    "y": 420,
+    "wires": [
+      [
+        "ddb1cba5cc2fcff1",
+        "63e20e0b668699f8"
+      ]
+    ]
+  },
+  {
+    "id": "e58b6cfeca6b2c12",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "JSON converter",
+    "func": "\nlet val = msg.payload;\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 500,
+    "y": 600,
+    "wires": [
+      [
+        "91a8585d21109f84",
+        "d25bdeec47b39ed2"
+      ]
+    ]
+  },
+  {
+    "id": "91a8585d21109f84",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "Light check",
+    "func": "var value = msg.payload.value\n\nif(value > global.get(\"Lthreshold\")){\n\nreturn msg;\n}\n    \n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1050,
+    "y": 660,
+    "wires": [
+      [
+        "369060609f013492"
+      ]
+    ]
+  },
+  {
+    "id": "9b06fda8c2476965",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "JSON converter",
+    "func": "\nlet val = msg.payload;\n\nmsg.payload = {\n    place: \"livingroom\",\n    sensor: \"light\",\n    value: val\n    \n};\n\n\nreturn msg;\n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 500,
+    "y": 760,
+    "wires": [
+      [
+        "91a8585d21109f84",
+        "5bdc724efb391ce4"
+      ]
+    ]
+  },
+  {
+    "id": "0fe6921a486410a4",
+    "type": "debug",
+    "z": "76e4921e87a05a32",
+    "name": "Debug MQTT",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 460,
+    "y": 440,
+    "wires": []
+  },
+  {
+    "id": "1500b7b6820595b5",
+    "type": "mqtt in",
+    "z": "76e4921e87a05a32",
+    "name": "Get Threshold",
+    "topic": "temperature/threshold",
+    "qos": "2",
+    "datatype": "auto-detect",
+    "broker": "mqttBroker",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0,
+    "x": 190,
+    "y": 1220,
+    "wires": [
+      [
+        "05c9a11d17c44491"
+      ]
+    ]
+  },
+  {
+    "id": "1c8ad30cd8fb4fbb",
+    "type": "mqtt out",
+    "z": "76e4921e87a05a32",
+    "name": "Temp threshold",
+    "topic": "temperature/threshold",
+    "qos": "2",
+    "retain": "",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "mqttBroker",
+    "x": 680,
+    "y": 1280,
+    "wires": []
+  },
+  {
+    "id": "05c9a11d17c44491",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "set threshold",
+    "func": "var threshold_value = msg.payload\nglobal.set(\"threshold\",threshold_value);\nmsg.payload = \"threshold set to:\" + threshold_value;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 450,
+    "y": 1220,
+    "wires": [
+      [
+        "7fd76f0345491f38"
+      ]
+    ]
+  },
+  {
+    "id": "7fd76f0345491f38",
+    "type": "debug",
+    "z": "76e4921e87a05a32",
+    "name": "Debug threshold",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 680,
+    "y": 1220,
+    "wires": []
+  },
+  {
+    "id": "537f0d14f0763a0f",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "threshold value",
+    "func": "msg.payload = 20\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 460,
+    "y": 1280,
+    "wires": [
+      [
+        "1c8ad30cd8fb4fbb"
+      ]
+    ]
+  },
+  {
+    "id": "acfbe19e2c380baa",
+    "type": "inject",
+    "z": "76e4921e87a05a32",
+    "name": "activate threshold",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "10",
+    "crontab": "",
+    "once": true,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 230,
+    "y": 1280,
+    "wires": [
+      [
+        "537f0d14f0763a0f",
+        "7d0bd14992733c01"
+      ]
+    ]
+  },
+  {
+    "id": "7d0bd14992733c01",
+    "type": "debug",
+    "z": "76e4921e87a05a32",
+    "name": "Debug threshold",
+    "active": false,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 470,
+    "y": 1340,
+    "wires": []
+  },
+  {
+    "id": "4e032a53e645f15d",
+    "type": "mqtt in",
+    "z": "76e4921e87a05a32",
+    "name": "Get Threshold",
+    "topic": "light/threshold",
+    "qos": "2",
+    "datatype": "auto-detect",
+    "broker": "mqttBroker",
+    "nl": false,
+    "rap": false,
+    "rh": 0,
+    "inputs": 0,
+    "x": 190,
+    "y": 1440,
+    "wires": [
+      [
+        "d8667e3e150d3bcd"
+      ]
+    ]
+  },
+  {
+    "id": "072be305d7dbd932",
+    "type": "mqtt out",
+    "z": "76e4921e87a05a32",
+    "name": "Light threshold",
+    "topic": "light/threshold",
+    "qos": "2",
+    "retain": "",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "mqttBroker",
+    "x": 680,
+    "y": 1500,
+    "wires": []
+  },
+  {
+    "id": "d8667e3e150d3bcd",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "set threshold",
+    "func": "var threshold_value = msg.payload\nglobal.set(\"Lthreshold\",threshold_value);\nmsg.payload = \"Lthreshold set to:\" + threshold_value;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 450,
+    "y": 1440,
+    "wires": [
+      [
+        "cbb5b3db72e75f8d"
+      ]
+    ]
+  },
+  {
+    "id": "cbb5b3db72e75f8d",
+    "type": "debug",
+    "z": "76e4921e87a05a32",
+    "name": "Debug threshold",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 680,
+    "y": 1440,
+    "wires": []
+  },
+  {
+    "id": "02a06790660f1a34",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "threshold value",
+    "func": "msg.payload = 5\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 460,
+    "y": 1500,
+    "wires": [
+      [
+        "072be305d7dbd932"
+      ]
+    ]
+  },
+  {
+    "id": "b976ba14b1fc5626",
+    "type": "inject",
+    "z": "76e4921e87a05a32",
+    "name": "activate threshold",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "10",
+    "crontab": "",
+    "once": true,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 230,
+    "y": 1500,
+    "wires": [
+      [
+        "02a06790660f1a34",
+        "89b7a86afde64373"
+      ]
+    ]
+  },
+  {
+    "id": "89b7a86afde64373",
+    "type": "debug",
+    "z": "76e4921e87a05a32",
+    "name": "Debug threshold",
+    "active": false,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 470,
+    "y": 1560,
+    "wires": []
+  },
+  {
+    "id": "c5f7ab95ea2a75e1",
+    "type": "influxdb out",
+    "z": "76e4921e87a05a32",
+    "influxdb": "7e2934393ac03b0c",
+    "name": "influx LightBed",
+    "measurement": "light_bed",
+    "precision": "",
+    "retentionPolicy": "",
+    "database": "database",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "univaq",
+    "bucket": "smart_home_iot",
+    "x": 860,
+    "y": 820,
+    "wires": []
+  },
+  {
+    "id": "cc30f2e3544c46ad",
+    "type": "influxdb out",
+    "z": "76e4921e87a05a32",
+    "influxdb": "7e2934393ac03b0c",
+    "name": "influx lightLiv",
+    "measurement": "light_liv",
+    "precision": "",
+    "retentionPolicy": "",
+    "database": "database",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "univaq",
+    "bucket": "smart_home_iot",
+    "x": 870,
+    "y": 560,
+    "wires": []
+  },
+  {
+    "id": "3bb32a288ef54e05",
+    "type": "influxdb out",
+    "z": "76e4921e87a05a32",
+    "influxdb": "7e2934393ac03b0c",
+    "name": "influx tempBed",
+    "measurement": "temp_bed",
+    "precision": "",
+    "retentionPolicy": "",
+    "database": "database",
+    "precisionV18FluxV20": "ms",
+    "retentionPolicyV18Flux": "",
+    "org": "univaq",
+    "bucket": "smart_home_iot",
+    "x": 860,
+    "y": 460,
+    "wires": []
+  },
+  {
+    "id": "f4db77a843796db9",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "into influx",
+    "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 680,
+    "y": 460,
+    "wires": [
+      [
+        "3bb32a288ef54e05"
+      ]
+    ]
+  },
+  {
+    "id": "63e20e0b668699f8",
+    "type": "debug",
+    "z": "76e4921e87a05a32",
+    "name": "bot",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1510,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "2c77131cb18dc3a8",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "into influx",
+    "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 700,
+    "y": 200,
+    "wires": [
+      [
+        "b1465d6f93c0de3a"
+      ]
+    ]
+  },
+  {
+    "id": "d25bdeec47b39ed2",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "into influx",
+    "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 680,
+    "y": 560,
+    "wires": [
+      [
+        "cc30f2e3544c46ad"
+      ]
+    ]
+  },
+  {
+    "id": "5bdc724efb391ce4",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "into influx",
+    "func": "var val = msg.payload.value;\nmsg.payload = val;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 680,
+    "y": 820,
+    "wires": [
+      [
+        "c5f7ab95ea2a75e1"
+      ]
+    ]
+  },
+  {
+    "id": "51b437a80f1c641d",
+    "type": "debug",
+    "z": "76e4921e87a05a32",
+    "name": "response",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1850,
+    "y": 420,
+    "wires": []
+  },
+  {
+    "id": "ebfd701fe6506fd9",
+    "type": "function",
+    "z": "76e4921e87a05a32",
+    "name": "temperature check",
+    "func": "var temp_value = msg.payload.value\n\nif(temp_value > global.get(\"threshold\")){\n\nreturn msg;\n\n}\n    \n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 950,
+    "y": 320,
+    "wires": [
+      [
+        "369060609f013492"
+      ]
+    ]
+  }
 ]

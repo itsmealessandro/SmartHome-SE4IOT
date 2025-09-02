@@ -75,6 +75,7 @@ services:
   sensors:
     build: ./sensors/
     hostname: sensorsName
+    container_name: sens-cont
     networks:
       - net-test
     depends_on:
