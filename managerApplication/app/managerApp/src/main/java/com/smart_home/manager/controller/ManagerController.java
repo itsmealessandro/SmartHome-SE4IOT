@@ -1,6 +1,7 @@
 package com.smart_home.manager.controller;
 
-import java.util.Set;
+import java.io.IOException;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +23,14 @@ public class ManagerController {
   @GetMapping("/")
   public String showThresholds(Model model) {
     System.out.println("[SERVER] page asked");
-    Set<Threshold> thresholds = thresholdsService.getThresholds();
+    List<Threshold> thresholds;
+    try {
+      thresholds = thresholdsService.getThresholds();
+    } catch (IOException e) {
+      e.printStackTrace();
+      model.addAttribute("message", "internal error");
+      return "thresholdsPage";
+    }
     model.addAttribute("thresholds", thresholds);
 
     return "thresholdsPage";

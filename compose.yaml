@@ -112,6 +112,8 @@ services:
       MQTT_BROKER: mosquitto-container
     ports:
       - "${MANAGER_PORT}:8089"
+    volumes:
+      - ./simulated_env:/simulated_env
 
 networks:
   net-test:

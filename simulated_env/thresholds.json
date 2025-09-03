@@ -1,0 +1,22 @@
+[
+  {
+    "room": "livingroom",
+    "sensorType": "light",
+    "value": 5
+  },
+  {
+    "room": "livingroom",
+    "sensorType": "temperature",
+    "value": 2
+  },
+  {
+    "room": "bedroom",
+    "sensorType": "light",
+    "value": 1
+  },
+  {
+    "room": "bedroom",
+    "sensorType": "temperature",
+    "value": 1
+  }
+]

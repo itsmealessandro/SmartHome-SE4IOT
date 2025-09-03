@@ -4,13 +4,53 @@
 <head>
   <meta charset="UTF-8">
   <title>Lista Thresholds</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6fa;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #2c3e50;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #ffffff;
+      margin: 8px 0;
+      padding: 10px 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .message-box {
+      background-color: #eafaf1;
+      border: 1px solid #2ecc71;
+      color: #2c3e50;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 
 <body>
   <h1>Lista dei Thresholds</h1>
+
+  <!-- Box messaggio, visibile solo se esiste il parametro -->
+  <div class="message-box" th:if="${message}" th:text="${message}"></div>
+
   <ul>
     <li th:each="threshold : ${thresholds}"
-      th:text="${threshold.room} + ' ' +${threshold.sensorType} + ' ' + ${threshold.value}"></li>
+      th:text="${threshold.room} + ' — ' + ${threshold.sensorType} + ': ' + ${threshold.value}">
+    </li>
   </ul>
 </body>
 
