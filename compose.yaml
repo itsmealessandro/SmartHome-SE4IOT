@@ -97,6 +97,22 @@ services:
   #   volumes:
   #     - ./simulated_env:/simulated_env
 
+
+
+  # SERVER
+  # --------------------------------------------
+  manager_app:
+    env_file:
+      - .env
+    build: ./managerApplication/
+    container_name: managerApp
+    networks:
+      - net-test
+    environment:
+      MQTT_BROKER: mosquitto-container
+    ports:
+      - "${MANAGER_PORT}:8089"
+
 networks:
   net-test:
     driver: bridge

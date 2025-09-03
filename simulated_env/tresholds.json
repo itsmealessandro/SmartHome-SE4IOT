@@ -1,9 +1,9 @@
 {
-  "bedroom" : {
+  "bedroom_threshold" : {
     "light" : "0",
     "temperature" : "0",
   },
-  "livingroom" : {
+  "livingroom_threshold"" : {
     "light" : "0",
     "temperature" : "0",
   }

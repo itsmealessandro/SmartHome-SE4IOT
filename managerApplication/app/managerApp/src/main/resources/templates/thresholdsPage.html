@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Lista Thresholds</title>
+</head>
+
+<body>
+  <h1>Lista dei Thresholds</h1>
+  <ul>
+    <li th:each="threshold : ${thresholds}"
+      th:text="${threshold.room} + ' ' +${threshold.sensorType} + ' ' + ${threshold.value}"></li>
+  </ul>
+</body>
+
+</html>
