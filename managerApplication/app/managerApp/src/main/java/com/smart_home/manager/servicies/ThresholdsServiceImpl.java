@@ -19,10 +19,8 @@ public class ThresholdsServiceImpl implements ThresholdsService {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    // Path al file JSON
     File file = new File("/simulated_env/thresholds.json");
 
-    // Legge l'array come lista di SensorData
     List<Threshold> thresholds = mapper.readValue(
         file,
         mapper.getTypeFactory().constructCollectionType(List.class, Threshold.class));
@@ -34,6 +32,24 @@ public class ThresholdsServiceImpl implements ThresholdsService {
       System.out.println("Value: " + threshold.getValue());
       System.out.println("----");
     }
+    return thresholds;
+  }
+
+  @Override
+  public List<Threshold> updateThresholds(List<Threshold> thresholds) throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+
+    File file = new File("/simulated_env/thresholds.json");
+
+    mapper.writerWithDefaultPrettyPrinter().writeValue(file, thresholds);
+
+    System.out.println("[SERVER] Thresholds aggiornati:");
+    for (Threshold threshold : thresholds) {
+      System.out.println("Room: " + threshold.getRoom()
+          + ", Sensor Type: " + threshold.getSensorType()
+          + ", Value: " + threshold.getValue());
+    }
+
     return thresholds;
   }
 
