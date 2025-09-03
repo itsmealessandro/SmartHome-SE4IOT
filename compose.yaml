@@ -5,7 +5,7 @@ services:
   broker:
     env_file:
       - .env
-    container_name: mosquitto-container
+    container_name: mosquitto-IOT
     hostname: mosquittoName
     image: eclipse-mosquitto
     ports:
@@ -75,6 +75,7 @@ services:
   sensors:
     build: ./sensors/
     hostname: sensorsName
+    container_name: sens-cont
     networks:
       - net-test
     depends_on:
@@ -85,16 +86,16 @@ services:
 
 
   # Actuators
-  actuators:
-    build: ./actuators/
-    hostname: actuatorsName
-    networks:
-      - net-test
-    depends_on:
-      - broker
-      - nodered
-    volumes:
-      - ./simulated_env:/simulated_env
+  # actuators:
+  #   build: ./actuators/
+  #   hostname: actuatorsName
+  #   networks:
+  #     - net-test
+  #   depends_on:
+  #     - broker
+  #     - nodered
+  #   volumes:
+  #     - ./simulated_env:/simulated_env
 
 networks:
   net-test:
