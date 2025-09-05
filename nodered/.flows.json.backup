@@ -71,7 +71,7 @@
         "rap": false,
         "rh": 0,
         "inputs": 0,
-        "x": 190,
+        "x": 90,
         "y": 140,
         "wires": [
             [
@@ -102,7 +102,7 @@
                 "valueValue": ""
             }
         ],
-        "x": 800,
+        "x": 700,
         "y": 260,
         "wires": [
             [
@@ -131,7 +131,7 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 210,
+        "x": 110,
         "y": 60,
         "wires": [
             [
@@ -152,7 +152,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 580,
+        "x": 480,
         "y": 40,
         "wires": []
     },
@@ -168,7 +168,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
+        "x": 280,
         "y": 60,
         "wires": [
             [
@@ -181,14 +181,14 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "send alert",
-        "func": "var val = msg.payload.value;\nvar place= msg.payload.place;\nvar sens = msg.payload.sensor;\nvar chatID = env.get(\"TG_CHAT_ID\");\nvar token = env.get(\"TGBOT_TOKEN\");\nmsg.url = \"https://api.telegram.org/bo\" + token + \"/sendMessage\";\n\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\"\n};\n\nmsg.payload = JSON.stringify({\n    chat_id: chatID,\n    text:\n        \"Domain: SmartHome\\n\" +\n        \"Location: \" + place + \"\\n\" +\n        \"Sensor: \" + sens + \"\\n\" +\n        \"Condition: Exceeded max value\"\n});\nreturn msg;\n",
+        "func": "var val = msg.payload.value;\nvar place= msg.payload.room;\nvar sens = msg.payload.sensorType;\nvar chatID = env.get(\"TG_CHAT_ID\");\nvar token = env.get(\"TGBOT_TOKEN\");\nmsg.url = \"https://api.telegram.org/bo\" + token + \"/sendMessage\";\n\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\"\n};\n\nmsg.payload = JSON.stringify({\n    chat_id: chatID,\n    text:\n        \"Domain: SmartHome\\n\" +\n        \"Location: \" + place + \"\\n\" +\n        \"Sensor: \" + sens + \"\\n\" +\n        \"Condition: Exceeded max value\"\n});\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 560,
+        "x": 500,
         "y": 220,
         "wires": [
             [
@@ -210,7 +210,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 990,
+        "x": 890,
         "y": 220,
         "wires": []
     },
@@ -227,7 +227,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1010,
+        "x": 910,
         "y": 260,
         "wires": []
     },
@@ -236,14 +236,14 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "parseData",
-        "func": "var topic_split = msg.topic.split(\"/\");\n// topic= {Network,Room,SensType}\n\n\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: topic_split[1],\n    sensor: topic_split[2],\n    value: val  \n};\n\n\nreturn msg;\n",
+        "func": "var topic_split = msg.topic.split(\"/\");\n// topic= {Network,Room,SensType}\n\n\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    room: topic_split[1],\n    sensorType: topic_split[2],\n    value: val  \n};\n\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 390,
+        "x": 290,
         "y": 140,
         "wires": [
             [
@@ -258,14 +258,14 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "into influx",
-        "func": "// supponiamo che msg.topic_split sia un array già creato da uno split sul topic\nvar extractedMeasure = msg.payload.place + \"_\" +msg.payload.sensor ; \n\n// prendi il valore\nvar val = msg.payload.value; \n\n// prepara il messaggio per Influx\nmsg.measurement = extractedMeasure;        // measurement dinamico\nmsg.fields = { value: val };               // campo che vuoi salvare\nreturn msg;\n",
+        "func": "// supponiamo che msg.topic_split sia un array già creato da uno split sul topic\nvar extractedMeasure = msg.payload.room + \"_\" +msg.payload.sensorType ; \n\n// prendi il valore\nvar val = msg.payload.value; \n\n// prepara il messaggio per Influx\nmsg.measurement = extractedMeasure;        // measurement dinamico\nmsg.fields = { value: val };               // campo che vuoi salvare\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 560,
+        "x": 460,
         "y": 140,
         "wires": [
             [
@@ -287,7 +287,7 @@
         "retentionPolicyV18Flux": "",
         "org": "univaq",
         "bucket": "smart_home_iot",
-        "x": 720,
+        "x": 620,
         "y": 140,
         "wires": []
     },
@@ -304,7 +304,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 560,
+        "x": 460,
         "y": 100,
         "wires": []
     },
@@ -313,158 +313,36 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "thresholds check",
-        "func": "var value = msg.payload.value\n\nif(value > global.get(\"Lthreshold\")){\n\nreturn msg;\n}\n    \n",
+        "func": "var value = msg.payload.value;\nvar room = msg.payload.room;\nvar sensorType = msg.payload.sensorType;\nvar t_globalName = room + \"_\" + sensorType;\nif(value > global.get(t_globalName)){\n    return msg;\n}\n    \n\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 410,
+        "x": 310,
         "y": 220,
         "wires": [
             [
-                "369060609f013492"
+                "369060609f013492",
+                "dcbb368b732d51ec"
             ]
         ]
     },
     {
-        "id": "1500b7b6820595b5",
-        "type": "mqtt in",
-        "z": "aabb6b52ef1c11bc",
-        "name": "Get Threshold",
-        "topic": "temperature/threshold",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "mqttBroker",
-        "nl": false,
-        "rap": false,
-        "rh": 0,
-        "inputs": 0,
-        "x": 110,
-        "y": 40,
-        "wires": [
-            [
-                "05c9a11d17c44491"
-            ]
-        ]
-    },
-    {
-        "id": "1c8ad30cd8fb4fbb",
-        "type": "mqtt out",
-        "z": "aabb6b52ef1c11bc",
-        "name": "Temp threshold",
-        "topic": "temperature/threshold",
-        "qos": "2",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "mqttBroker",
-        "x": 600,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "05c9a11d17c44491",
-        "type": "function",
-        "z": "aabb6b52ef1c11bc",
-        "name": "set threshold",
-        "func": "var threshold_value = msg.payload\nglobal.set(\"threshold\",threshold_value);\nmsg.payload = \"threshold set to:\" + threshold_value;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 370,
-        "y": 40,
-        "wires": [
-            [
-                "7fd76f0345491f38"
-            ]
-        ]
-    },
-    {
-        "id": "7fd76f0345491f38",
+        "id": "dcbb368b732d51ec",
         "type": "debug",
-        "z": "aabb6b52ef1c11bc",
-        "name": "Debug threshold",
-        "active": false,
+        "z": "76e4921e87a05a32",
+        "name": "debug 4",
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
+        "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 600,
-        "y": 40,
-        "wires": []
-    },
-    {
-        "id": "537f0d14f0763a0f",
-        "type": "function",
-        "z": "aabb6b52ef1c11bc",
-        "name": "threshold value",
-        "func": "msg.payload = 20\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 100,
-        "wires": [
-            [
-                "1c8ad30cd8fb4fbb"
-            ]
-        ]
-    },
-    {
-        "id": "acfbe19e2c380baa",
-        "type": "inject",
-        "z": "aabb6b52ef1c11bc",
-        "name": "activate threshold",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "10",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 150,
-        "y": 100,
-        "wires": [
-            [
-                "537f0d14f0763a0f",
-                "7d0bd14992733c01"
-            ]
-        ]
-    },
-    {
-        "id": "7d0bd14992733c01",
-        "type": "debug",
-        "z": "aabb6b52ef1c11bc",
-        "name": "Debug threshold",
-        "active": false,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 390,
-        "y": 160,
+        "x": 430,
+        "y": 300,
         "wires": []
     },
     {
@@ -472,7 +350,7 @@
         "type": "mqtt in",
         "z": "aabb6b52ef1c11bc",
         "name": "Get Threshold",
-        "topic": "light/threshold",
+        "topic": "SmartHome/thresholds/#",
         "qos": "2",
         "datatype": "auto-detect",
         "broker": "mqttBroker",
@@ -489,29 +367,11 @@
         ]
     },
     {
-        "id": "072be305d7dbd932",
-        "type": "mqtt out",
-        "z": "aabb6b52ef1c11bc",
-        "name": "Light threshold",
-        "topic": "light/threshold",
-        "qos": "2",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "mqttBroker",
-        "x": 600,
-        "y": 320,
-        "wires": []
-    },
-    {
         "id": "d8667e3e150d3bcd",
         "type": "function",
         "z": "aabb6b52ef1c11bc",
         "name": "set threshold",
-        "func": "var threshold_value = msg.payload\nglobal.set(\"Lthreshold\",threshold_value);\nmsg.payload = \"Lthreshold set to:\" + threshold_value;\nreturn msg;",
+        "func": "var threshold_value = msg.payload\nvar topic = msg.topic;\n\n// e.g. arr = [SmartHome,thresholds,livingroom,light]\nvar arr = topic.split(\"/\");\n\n\n// e.g. t_global= \"livingroom_light\"\nvar t_global = arr[2]+ \"_\" +arr[3]; \nglobal.set(t_global,threshold_value);\n\nmsg.payload = \"threshold [\"+ t_global +\"] set to:\" + threshold_value;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -531,7 +391,7 @@
         "type": "debug",
         "z": "aabb6b52ef1c11bc",
         "name": "Debug threshold",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -541,69 +401,6 @@
         "statusType": "auto",
         "x": 600,
         "y": 260,
-        "wires": []
-    },
-    {
-        "id": "02a06790660f1a34",
-        "type": "function",
-        "z": "aabb6b52ef1c11bc",
-        "name": "threshold value",
-        "func": "msg.payload = 5\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 320,
-        "wires": [
-            [
-                "072be305d7dbd932"
-            ]
-        ]
-    },
-    {
-        "id": "b976ba14b1fc5626",
-        "type": "inject",
-        "z": "aabb6b52ef1c11bc",
-        "name": "activate threshold",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "10",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 150,
-        "y": 320,
-        "wires": [
-            [
-                "02a06790660f1a34",
-                "89b7a86afde64373"
-            ]
-        ]
-    },
-    {
-        "id": "89b7a86afde64373",
-        "type": "debug",
-        "z": "aabb6b52ef1c11bc",
-        "name": "Debug threshold",
-        "active": false,
-        "tosidebar": true,
-        "console": true,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 390,
-        "y": 380,
         "wires": []
     }
 ]

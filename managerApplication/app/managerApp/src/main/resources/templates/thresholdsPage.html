@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Lista Thresholds</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6fa;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    .message-box {
+      background-color: #eafaf1;
+      border: 1px solid #2ecc71;
+      color: #2c3e50;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #2c3e50;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #ecf0f1;
+    }
+
+    input[type="number"] {
+      width: 70px;
+      padding: 5px;
+      border: 1px solid #bdc3c7;
+      border-radius: 5px;
+    }
+
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    button:hover {
+      background: #2980b9;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Thresholds list</h1>
+
+  <!-- Box messaggio -->
+  <div class="message-box" th:if="${message}" th:text="${message}"></div>
+
+  <!-- Form per inviare modifiche -->
+  <form th:action="@{/changeThresholds}" method="post">
+    <table>
+      <thead>
+        <tr>
+          <th>Room</th>
+          <th>Sensor Type</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="threshold, iterStat : ${thresholds}">
+          <td th:text="${threshold.room}"></td>
+          <td th:text="${threshold.sensorType}"></td>
+          <!-- campo numerico modificabile -->
+          <td>
+            <input type="hidden" th:name="thresholds[__${iterStat.index}__].room" th:value="${threshold.room}" />
+            <input type="hidden" th:name="thresholds[__${iterStat.index}__].sensorType"
+              th:value="${threshold.sensorType}" />
+            <input type="number" th:name="thresholds[__${iterStat.index}__].value" th:value="${threshold.value}" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button type="submit">Conferma modifiche</button>
+  </form>
+</body>
+
+</html>
