@@ -71,7 +71,7 @@
         "rap": false,
         "rh": 0,
         "inputs": 0,
-        "x": 190,
+        "x": 90,
         "y": 140,
         "wires": [
             [
@@ -102,7 +102,7 @@
                 "valueValue": ""
             }
         ],
-        "x": 800,
+        "x": 700,
         "y": 260,
         "wires": [
             [
@@ -131,7 +131,7 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 210,
+        "x": 110,
         "y": 60,
         "wires": [
             [
@@ -152,7 +152,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 580,
+        "x": 480,
         "y": 40,
         "wires": []
     },
@@ -168,7 +168,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
+        "x": 280,
         "y": 60,
         "wires": [
             [
@@ -188,7 +188,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 560,
+        "x": 500,
         "y": 220,
         "wires": [
             [
@@ -210,7 +210,7 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 990,
+        "x": 890,
         "y": 220,
         "wires": []
     },
@@ -227,7 +227,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1010,
+        "x": 910,
         "y": 260,
         "wires": []
     },
@@ -243,7 +243,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 390,
+        "x": 290,
         "y": 140,
         "wires": [
             [
@@ -265,7 +265,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 560,
+        "x": 460,
         "y": 140,
         "wires": [
             [
@@ -287,7 +287,7 @@
         "retentionPolicyV18Flux": "",
         "org": "univaq",
         "bucket": "smart_home_iot",
-        "x": 720,
+        "x": 620,
         "y": 140,
         "wires": []
     },
@@ -304,7 +304,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 560,
+        "x": 460,
         "y": 100,
         "wires": []
     },
@@ -320,7 +320,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 410,
+        "x": 310,
         "y": 220,
         "wires": [
             [

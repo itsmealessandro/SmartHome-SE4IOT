@@ -236,7 +236,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "parseData",
-        "func": "var topic_split = msg.topic.split(\"/\");\n// topic= {Network,Room,SensType}\n\n\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    place: topic_split[1],\n    sensor: topic_split[2],\n    value: val  \n};\n\n\nreturn msg;\n",
+        "func": "var topic_split = msg.topic.split(\"/\");\n// topic= {Network,Room,SensType}\n\n\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    room: topic_split[1],\n    sensorType: topic_split[2],\n    value: val  \n};\n\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -258,7 +258,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "into influx",
-        "func": "// supponiamo che msg.topic_split sia un array già creato da uno split sul topic\nvar extractedMeasure = msg.payload.place + \"_\" +msg.payload.sensor ; \n\n// prendi il valore\nvar val = msg.payload.value; \n\n// prepara il messaggio per Influx\nmsg.measurement = extractedMeasure;        // measurement dinamico\nmsg.fields = { value: val };               // campo che vuoi salvare\nreturn msg;\n",
+        "func": "// supponiamo che msg.topic_split sia un array già creato da uno split sul topic\nvar extractedMeasure = msg.payload.room + \"_\" +msg.payload.sensorType ; \n\n// prendi il valore\nvar val = msg.payload.value; \n\n// prepara il messaggio per Influx\nmsg.measurement = extractedMeasure;        // measurement dinamico\nmsg.fields = { value: val };               // campo che vuoi salvare\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -324,9 +324,26 @@
         "y": 220,
         "wires": [
             [
-                "369060609f013492"
+                "369060609f013492",
+                "dcbb368b732d51ec"
             ]
         ]
+    },
+    {
+        "id": "dcbb368b732d51ec",
+        "type": "debug",
+        "z": "76e4921e87a05a32",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 430,
+        "y": 300,
+        "wires": []
     },
     {
         "id": "1500b7b6820595b5",

@@ -2,17 +2,49 @@ package com.smart_home.manager.servicies;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smart_home.manager.model.Threshold;
+import com.smart_home.manager.model.ThresholdClientWrapper;
 
 @Service
 public class ThresholdsServiceImpl implements ThresholdsService {
+
+  private MemoryPersistence persistence;
+  private final String MQTT_BROKER = "tcp://broker:1883";
+  private final String TOPIC_DOMAIN = "smart_home/thresholds"; // "/room/Sensor"
+  private final String CLIENT_ID = "thresholds_publisher";
+  private MqttClient MQTT_CLIENT;
+  private final MqttConnectOptions CONN_OPT;
+  private final int QOS = 1;
+
+  // setup thresholds info
+  public ThresholdsServiceImpl() {
+
+    persistence = new MemoryPersistence();
+    CONN_OPT = new MqttConnectOptions();
+    CONN_OPT.setCleanSession(true);
+    try {
+      MQTT_CLIENT = new MqttClient(MQTT_BROKER, CLIENT_ID, persistence);
+
+    } catch (MqttException e) {
+      System.out.println("constructor oops...");
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
 
   @Override
   public List<Threshold> getThresholds() throws StreamReadException, DatabindException, IOException {
@@ -51,6 +83,32 @@ public class ThresholdsServiceImpl implements ThresholdsService {
     }
 
     return thresholds;
+  }
+
+  @Override
+  @Scheduled(fixedRate = 5000)
+  public void publishThresholdsMQTT() {
+
+    try {
+      List<Threshold> thresholds = getThresholds();
+
+      for (Threshold threshold : thresholds) {
+
+        String content = String.valueOf(threshold.getValue());
+        MqttMessage message = new MqttMessage(content.getBytes());
+
+        message.setQos(1);
+        message.setPayload(content.getBytes());
+        String topic = TOPIC_DOMAIN + "/" + threshold.getRoom() + "/" + threshold.getSensorType();
+        MQTT_CLIENT.publish(topic, message);
+        MQTT_CLIENT.disconnect();
+        MQTT_CLIENT.close();
+
+      }
+    } catch (MqttException | IOException e) {
+      System.out.println("oops scheduled");
+      e.printStackTrace();
+    }
   }
 
 }
