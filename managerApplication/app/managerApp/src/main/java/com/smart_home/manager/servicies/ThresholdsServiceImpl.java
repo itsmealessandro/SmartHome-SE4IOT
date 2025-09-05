@@ -2,7 +2,6 @@ package com.smart_home.manager.servicies;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -17,14 +16,13 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smart_home.manager.model.Threshold;
-import com.smart_home.manager.model.ThresholdClientWrapper;
 
 @Service
 public class ThresholdsServiceImpl implements ThresholdsService {
 
   private MemoryPersistence persistence;
   private final String MQTT_BROKER = "tcp://broker:1883";
-  private final String TOPIC_DOMAIN = "smart_home/thresholds"; // "/room/Sensor"
+  private final String TOPIC_DOMAIN = "SmartHome/thresholds"; // "/room/Sensor"
   private final String CLIENT_ID = "thresholds_publisher";
   private MqttClient MQTT_CLIENT;
   private final MqttConnectOptions CONN_OPT;
@@ -97,12 +95,12 @@ public class ThresholdsServiceImpl implements ThresholdsService {
         String content = String.valueOf(threshold.getValue());
         MqttMessage message = new MqttMessage(content.getBytes());
 
-        message.setQos(1);
+        message.setQos(QOS);
         message.setPayload(content.getBytes());
         String topic = TOPIC_DOMAIN + "/" + threshold.getRoom() + "/" + threshold.getSensorType();
+        MQTT_CLIENT.connect();
         MQTT_CLIENT.publish(topic, message);
         MQTT_CLIENT.disconnect();
-        MQTT_CLIENT.close();
 
       }
     } catch (MqttException | IOException e) {
