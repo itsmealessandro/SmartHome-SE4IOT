@@ -1,1 +1,4 @@
 .env
+/AGENTS.md
+/nodered/.config.nodes.json
+/nodered/.config.nodes.json.backup
