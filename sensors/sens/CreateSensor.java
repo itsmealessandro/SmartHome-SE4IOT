@@ -88,7 +88,7 @@ public class CreateSensor {
 
         String content = null;
         int alertProb = random.nextInt(0, 100);
-        if (alertProb <= 5) {
+        if (alertProb <= 1) {
 
           System.out.println(ANSI_RED + " ALERT VALUE sensor:" + args[0]);
           content = String.valueOf(random.nextInt(6, 10));
