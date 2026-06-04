@@ -17,7 +17,7 @@ The system leverages modern technologies to ensure flexibility, scalability, and
 2. **Communication Protocol**:
    - Use **MQTT** as the primary communication protocol.
    - Topic structure:
-     - `/smart_home/<room>/<sensor>` (e.g., `/smart_home/kitchen/temperature`).
+     - `SmartHome/<room>/<sensor>` (e.g., `SmartHome/kitchen/temperature`).
 
 3. **Data Processing**:
    - Middleware based on **Node-RED**:

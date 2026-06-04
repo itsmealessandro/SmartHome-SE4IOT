@@ -28,12 +28,17 @@ public class ThresholdsServiceImpl implements ThresholdsService {
   private final MqttConnectOptions CONN_OPT;
   private final int QOS = 1;
 
+  private volatile boolean isConnected = false;
+
   // setup thresholds info
   public ThresholdsServiceImpl() {
 
     persistence = new MemoryPersistence();
     CONN_OPT = new MqttConnectOptions();
     CONN_OPT.setCleanSession(true);
+    CONN_OPT.setAutomaticReconnect(true);
+    CONN_OPT.setConnectionTimeout(30);
+    CONN_OPT.setKeepAliveInterval(60);
     try {
       MQTT_CLIENT = new MqttClient(MQTT_BROKER, CLIENT_ID, persistence);
 
@@ -88,6 +93,13 @@ public class ThresholdsServiceImpl implements ThresholdsService {
   public void publishThresholdsMQTT() {
 
     try {
+      if (!isConnected || !MQTT_CLIENT.isConnected()) {
+        System.out.println("[MQTT] Connecting to broker...");
+        MQTT_CLIENT.connect(CONN_OPT);
+        isConnected = true;
+        System.out.println("[MQTT] Connected successfully");
+      }
+
       List<Threshold> thresholds = getThresholds();
 
       for (Threshold threshold : thresholds) {
@@ -98,14 +110,20 @@ public class ThresholdsServiceImpl implements ThresholdsService {
         message.setQos(QOS);
         message.setPayload(content.getBytes());
         String topic = TOPIC_DOMAIN + "/" + threshold.getRoom() + "/" + threshold.getSensorType();
-        MQTT_CLIENT.connect();
         MQTT_CLIENT.publish(topic, message);
-        MQTT_CLIENT.disconnect();
+        System.out.println("[MQTT] Published to " + topic + ": " + content);
 
       }
     } catch (MqttException | IOException e) {
-      System.out.println("oops scheduled");
-      e.printStackTrace();
+      System.out.println("[MQTT] Error: " + e.getMessage());
+      isConnected = false;
+      try {
+        if (MQTT_CLIENT.isConnected()) {
+          MQTT_CLIENT.disconnect();
+        }
+      } catch (MqttException ex) {
+        System.out.println("[MQTT] Error disconnecting");
+      }
     }
   }
 

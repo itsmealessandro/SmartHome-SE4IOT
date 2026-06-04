@@ -20,15 +20,15 @@ public class CreateActuator {
     String topic = args[0];
     String clientId = args[1];
 
+    if (!topic.matches("^SmartHome/[a-zA-Z0-9_]+/[a-zA-Z0-9_]+Act$")) {
+      System.out.println("Error: Topic must match pattern SmartHome/<room>/<sensor>Act");
+      System.out.println("Example: java CreateActuator SmartHome/bedroom/lightAct a1");
+      return;
+    }
+
     final String ANSI_RESET = "\u001B[0m";
-    final String ANSI_BLACK = "\u001B[30m";
-    final String ANSI_RED = "\u001B[31m";
     final String ANSI_GREEN = "\u001B[32m";
-    final String ANSI_YELLOW = "\u001B[33m";
-    final String ANSI_BLUE = "\u001B[34m";
-    final String ANSI_PURPLE = "\u001B[35m";
-    final String ANSI_CYAN = "\u001B[36m";
-    final String ANSI_WHITE = "\u001B[37m";
+    final String ANSI_RED = "\u001B[31m";
 
     int qos = 1;
     String broker = "tcp://broker:1883";
@@ -48,18 +48,40 @@ public class CreateActuator {
       sampleClient.setCallback(new MqttCallback() {
         @Override
         public void connectionLost(Throwable cause) {
-          System.out.println("Connessione persa! " + cause.getMessage());
+          System.out.println("Connessione persa! Tentativo di riconnessione...");
+          int maxRetries = 10;
+          int retryCount = 0;
+          while (!sampleClient.isConnected() && retryCount < maxRetries) {
+            try {
+              Thread.sleep(5000);
+              sampleClient.connect(connOpts);
+              sampleClient.subscribe(topic, qos);
+              System.out.println("Riconnesso al broker!");
+            } catch (Exception e) {
+              retryCount++;
+              System.out.println("Riconnessione fallita (" + retryCount + "/" + maxRetries + "), riprovo tra 5 secondi...");
+            }
+          }
+          if (!sampleClient.isConnected()) {
+            System.out.println("Riconnessione fallita dopo " + maxRetries + " tentativi. Uscita.");
+            System.exit(1);
+          }
         }
 
         @Override
         public void messageArrived(String topic, MqttMessage message) {
-          System.out.println(ANSI_GREEN + "Message recived from my topic: " + topic);
-          System.out.println(ANSI_GREEN + "Message value: " + message);
+          String msgStr = message.toString();
+          if ("actuator listening".equals(msgStr)) {
+            System.out.println("Skipping initial confirmation message");
+            return;
+          }
+          System.out.println(ANSI_GREEN + "Message received from my topic: " + topic);
+          System.out.println(ANSI_GREEN + "Message value: " + msgStr);
           try {
-            overrideEnv(message.toString(), topic);
+            overrideEnv(msgStr, topic);
           } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(ANSI_RED + "nooooooooooooooooooooooooooooooooooooooooo");
+            System.out.println(ANSI_RED + "Error overriding environment");
           }
           System.out.println(ANSI_GREEN + "Overriding environment data");
 
@@ -77,7 +99,8 @@ public class CreateActuator {
       sampleClient.subscribe(topic, qos);
       System.out.println("Sottoscritto al topic: " + topic);
 
-      // Pubblica il messaggio di conferma
+      Thread.sleep(1000);
+
       String content = "actuator listening";
       MqttMessage message = new MqttMessage(content.getBytes());
       message.setQos(qos);
@@ -127,7 +150,12 @@ public class CreateActuator {
 
       if (sensNode != null) {
         System.out.println("value is not null -> modifing");
-        ((ObjectNode) room).put(textSens, arrived_msg);
+        try {
+          int intValue = Integer.parseInt(arrived_msg.trim());
+          ((ObjectNode) room).put(textSens, intValue);
+        } catch (NumberFormatException e) {
+          ((ObjectNode) room).put(textSens, arrived_msg);
+        }
       } else {
         System.out.println("value is null");
       }
