@@ -23,11 +23,11 @@
             "lineWidth": 1,
             "showPoints": "auto"
           },
-          "unit": "celsius"
+          "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
       "id": 1,
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
@@ -36,113 +36,11 @@
       "targets": [
         {
           "datasource": { "type": "influxdb", "uid": "influxdb-univaq" },
-          "query": "from(bucket: \"smart_home_iot\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"bedroom_temperature\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")",
+          "query": "from(bucket: \"smart_home_iot\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"room\"] =~ /^${room:regex}$/)\n  |> filter(fn: (r) => r[\"sensorType\"] =~ /^${sensorType:regex}$/)\n  |> filter(fn: (r) => r[\"_measurement\"] =~ /^${measurement:regex}$/)\n  |> group(columns: [\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
           "refId": "A"
         }
       ],
-      "title": "Bedroom Temperature",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb-univaq"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "auto"
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
-      "id": 2,
-      "options": {
-        "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
-      },
-      "targets": [
-        {
-          "datasource": { "type": "influxdb", "uid": "influxdb-univaq" },
-          "query": "from(bucket: \"smart_home_iot\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"bedroom_light\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")",
-          "refId": "A"
-        }
-      ],
-      "title": "Bedroom Light",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb-univaq"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "auto"
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
-      "id": 3,
-      "options": {
-        "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
-      },
-      "targets": [
-        {
-          "datasource": { "type": "influxdb", "uid": "influxdb-univaq" },
-          "query": "from(bucket: \"smart_home_iot\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"livingroom_temperature\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")",
-          "refId": "A"
-        }
-      ],
-      "title": "Livingroom Temperature",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "influxdb-univaq"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "auto"
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
-      "id": 4,
-      "options": {
-        "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "single" }
-      },
-      "targets": [
-        {
-          "datasource": { "type": "influxdb", "uid": "influxdb-univaq" },
-          "query": "from(bucket: \"smart_home_iot\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"livingroom_light\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")",
-          "refId": "A"
-        }
-      ],
-      "title": "Livingroom Light",
+      "title": "Smart Home IoT",
       "type": "timeseries"
     }
   ],
@@ -150,11 +48,86 @@
   "schemaVersion": 35,
   "style": "dark",
   "tags": ["smarthome"],
-  "templating": { "list": [] },
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "influxdb-univaq"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Measurement",
+        "multi": true,
+        "name": "measurement",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\nschema.measurements(bucket: \"smart_home_iot\")",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "influxdb-univaq"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Room",
+        "multi": true,
+        "name": "room",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"smart_home_iot\", tag: \"room\")",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "influxdb-univaq"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Sensor",
+        "multi": true,
+        "name": "sensorType",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"smart_home_iot\", tag: \"sensorType\")",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
   "time": { "from": "now-15m", "to": "now" },
   "timepicker": {},
   "timezone": "",
   "title": "Smart Home IoT",
   "uid": "smarthome-main",
-  "version": 1
+  "version": 2
 }

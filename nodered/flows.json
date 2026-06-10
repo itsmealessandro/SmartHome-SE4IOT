@@ -278,7 +278,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "into influx",
-        "func": "// supponiamo che msg.topic_split sia un array già creato da uno split sul topic\nvar extractedMeasure = msg.payload.room + \"_\" +msg.payload.sensorType ; \n\n// prendi il valore\nvar val = msg.payload.value; \n\n// prepara il messaggio per Influx\nmsg.measurement = extractedMeasure;        // measurement dinamico\nmsg.fields = { value: val };               // campo che vuoi salvare\nreturn msg;\n",
+        "func": "var extractedMeasure = msg.payload.room + \"_\" + msg.payload.sensorType;\nvar val = msg.payload.value;\n\nmsg.measurement = extractedMeasure;\nmsg.tags = {\n    room: msg.payload.room,\n    sensorType: msg.payload.sensorType\n};\nmsg.fields = { value: val };\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
