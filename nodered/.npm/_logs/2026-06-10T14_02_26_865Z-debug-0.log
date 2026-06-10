@@ -1,0 +1,29 @@
+0 verbose cli /usr/local/bin/node /usr/src/node-red/node_modules/.bin/npm
+1 info using npm@10.9.8
+2 info using node@v20.20.2
+3 silly config load:file:/usr/src/node-red/node_modules/npm/npmrc
+4 silly config load:file:/data/.npmrc
+5 silly config load:file:/usr/src/node-red/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm install
+8 verbose argv "install" "--no-audit" "--no-fund"
+9 verbose logfile logs-max:10 dir:/data/.npm/_logs/2026-06-10T14_02_26_865Z-
+10 verbose logfile /data/.npm/_logs/2026-06-10T14_02_26_865Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+13 silly idealTree buildDeps
+14 silly reify moves {}
+15 http cache node-red-contrib-influxdb@https://registry.npmjs.org/node-red-contrib-influxdb/-/node-red-contrib-influxdb-0.7.0.tgz 0ms (cache hit)
+16 http cache lodash@https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz 0ms (cache hit)
+17 http cache influx@https://registry.npmjs.org/influx/-/influx-5.9.7.tgz 0ms (cache hit)
+18 http cache @influxdata/influxdb-client@https://registry.npmjs.org/@influxdata/influxdb-client/-/influxdb-client-1.33.2.tgz 0ms (cache hit)
+19 silly ADD node_modules/node-red-contrib-influxdb
+20 silly ADD node_modules/lodash
+21 silly ADD node_modules/influx
+22 silly ADD node_modules/@influxdata/influxdb-client
+23 verbose cwd /data
+24 verbose os Linux 7.0.3-arch1-2
+25 verbose node v20.20.2
+26 verbose npm  v10.9.8
+27 verbose exit 0
+28 info ok
