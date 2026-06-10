@@ -78,6 +78,7 @@ services:
     build: ./sensors/
     hostname: sensorsName
     container_name: sens-cont
+    init: true
     networks:
       - net-test
     depends_on:
@@ -92,6 +93,7 @@ services:
     build: ./actuators/
     hostname: actuatorsName
     container_name: act-cont
+    init: true
     networks:
       - net-test
     depends_on:
