@@ -3,12 +3,19 @@ import org.eclipse.paho.client.mqttv3.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.File;
 import java.io.IOException;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class CreateActuator {
+
+  private static final String ENV_PATH = "/simulated_env/env.json";
+  private static final ObjectMapper MAPPER = new ObjectMapper();
 
   public static void main(String[] args) {
 
@@ -119,57 +126,52 @@ public class CreateActuator {
   }
 
   public static void overrideEnv(String arrived_msg, String topic) throws IOException {
+    String[] splittedTopic = topic.split("/");
+    File jsonFile = new File(ENV_PATH);
+    if (!jsonFile.exists()) {
+      System.out.println("Errore: Il file JSON " + jsonFile.getAbsolutePath() + " non esiste.");
+      return;
+    }
 
-    try {
+    try (RandomAccessFile raf = new RandomAccessFile(jsonFile, "rw");
+        FileChannel channel = raf.getChannel();
+        FileLock lock = channel.lock()) {
 
-      String[] splittedTopic = topic.split("/");
-
-      // NOTE: JSON
-
-      // Creazione del mapper JSON
-      ObjectMapper objectMapper = new ObjectMapper();
-
-      File jsonFile = new File("/simulated_env/env.json");
-      if (!jsonFile.exists()) {
-        System.out.println("Errore: Il file JSON " + jsonFile.getAbsolutePath() + " non esiste.");
-        return;
-      }
-      // Lettura del file JSON
-      JsonNode rootNode = objectMapper.readTree(jsonFile);
-
+      JsonNode rootNode = MAPPER.readTree(jsonFile);
       String textRoom = splittedTopic[1];
-      System.out.println("room: " + splittedTopic[1]);
-      // WARNING: the topic is *Act because it repersent the actuator, so we need to
-      // remove the last 3 characters.
       String textSensAct = splittedTopic[2];
-      String textSens = textSensAct.replace("Act", "");
-      System.out.println("sens: " + splittedTopic[2]);
+      String textSens = textSensAct.endsWith("Act")
+          ? textSensAct.substring(0, textSensAct.length() - 3)
+          : textSensAct;
 
       JsonNode room = rootNode.get(textRoom);
-      JsonNode sensNode = room.get(textSens);
-
-      if (sensNode != null) {
-        System.out.println("value is not null -> modifing");
-        try {
-          int intValue = Integer.parseInt(arrived_msg.trim());
-          ((ObjectNode) room).put(textSens, intValue);
-        } catch (NumberFormatException e) {
-          ((ObjectNode) room).put(textSens, arrived_msg);
-        }
-      } else {
-        System.out.println("value is null");
+      if (room == null || !room.isObject()) {
+        System.out.println("Room not found: " + textRoom);
+        return;
       }
 
-      // Scrittura del file JSON aggiornato
-      objectMapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, rootNode);
-      // Rilettura del file JSON per la stampa
-      String updatedJson = objectMapper.readTree(jsonFile).toPrettyString();
-      System.out.println(updatedJson);
+      JsonNode sensNode = room.get(textSens);
+      if (sensNode == null) {
+        System.out.println("value is null");
+        return;
+      }
 
-    } catch (IOException e) {
-      System.out.println("IO Exception");
-      e.printStackTrace();
-      System.exit(1);
+      try {
+        int intValue = Integer.parseInt(arrived_msg.trim());
+        ((ObjectNode) room).put(textSens, intValue);
+      } catch (NumberFormatException e) {
+        ((ObjectNode) room).put(textSens, arrived_msg);
+      }
+
+      File tempFile = new File(ENV_PATH + ".tmp");
+      MAPPER.writerWithDefaultPrettyPrinter().writeValue(tempFile, rootNode);
+      Files.move(
+          tempFile.toPath(),
+          jsonFile.toPath(),
+          StandardCopyOption.ATOMIC_MOVE,
+          StandardCopyOption.REPLACE_EXISTING);
+
+      System.out.println(MAPPER.readTree(jsonFile).toPrettyString());
     }
   }
 }

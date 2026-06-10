@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 
 public class CreateSensor {
 
@@ -64,7 +67,12 @@ public class CreateSensor {
 
         String[] splittedTopic = topic.split("/");
 
-        JsonNode rootNode = objectMapper.readTree(jsonFile);
+        JsonNode rootNode;
+        try (RandomAccessFile raf = new RandomAccessFile(jsonFile, "r");
+            FileChannel channel = raf.getChannel();
+            FileLock lock = channel.lock(0, Long.MAX_VALUE, true)) {
+          rootNode = objectMapper.readTree(jsonFile);
+        }
 
         JsonNode room = rootNode.get(splittedTopic[1]);
         if (room == null) {
