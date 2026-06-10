@@ -1,0 +1,17 @@
+apiVersion: 1
+
+datasources:
+  - name: univaq
+    uid: influxdb-univaq
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    jsonData:
+      version: Flux
+      organization: univaq
+      defaultBucket: smart_home_iot
+      tlsSkipVerify: true
+    secureJsonData:
+      token: VYgbQWXlR51eaJkJTv-UujGEKyFmWavBHljSdQ7z8i-a1TCZ5l_FMyjOmOnoCnfwSbaDFvGyFcU3sSr0t_lupDQ==
+    editable: false
+    isDefault: true
