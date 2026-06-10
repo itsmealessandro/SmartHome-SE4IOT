@@ -4,3 +4,4 @@
 /nodered/.config.nodes.json.backup
 
 .env
+/.cursor/rules
