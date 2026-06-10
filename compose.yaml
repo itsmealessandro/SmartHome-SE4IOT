@@ -32,6 +32,11 @@ services:
       - ./nodered:/data
     depends_on:
       - broker
+    command: >
+      sh -c "
+        cd /data && npm install --no-audit --no-fund &&
+        exec /usr/src/node-red/entrypoint.sh
+      "
 
 
   # --------------------------------------------
