@@ -1,7 +1,7 @@
 [ {
   "room" : "livingroom",
   "sensorType" : "light",
-  "value" : 5.0
+  "value" : 9.0
 }, {
   "room" : "livingroom",
   "sensorType" : "temperature",
