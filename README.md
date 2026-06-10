@@ -30,6 +30,8 @@ Complete IoT stack for a simulated Smart Home: sensors publish MQTT data, Node-R
    ```
    Edit `.env` and set `TGBOT_TOKEN` and `TG_CHAT_ID` for Telegram alerts.
 
+   **Security note:** `.env` is tracked by git, so **do not commit real secrets**. If you fork or push, replace tokens with placeholders. The InfluxDB admin token in `.env.example` is for local development only; change it for any shared environment.
+
 3. Start the stack:
    ```bash
    docker compose up -d --build
@@ -79,8 +81,13 @@ When a sensor value exceeds its threshold, Node-RED:
 2. Publishes an actuator command (`light` → `0`, `temperature` → `20`)
 3. The actuator updates `env.json`, which sensors read on the next cycle
 
+Sensors have a 1% probability of publishing an anomalous "alert value" (random 6–10) on each cycle, regardless of `env.json`, to simulate fault conditions.
+
 ## Known limitations
 
 - MQTT broker allows anonymous connections (dev/demo only)
 - Email alerts and motion sensors are not implemented
 - Default credentials in `.env.example` are for local development only
+- The InfluxDB token is hardcoded in `grafana/provisioning/datasources/influxdb.yaml` — change it if you rotate tokens
+- `influxdb/` (custom setup) and `entrypoint.sh` are **legacy** — InfluxDB is now initialized via the official image's `DOCKER_INFLUXDB_INIT_*` env vars
+- `grafana/dockerfile` + `setup_dashboard.py` are **unused** — the compose.yaml uses the standard `grafana/grafana-oss:8.4.3` image with provisioning via volume mounts
