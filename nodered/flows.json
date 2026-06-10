@@ -75,6 +75,26 @@
         "y": 140,
         "wires": [
             [
+                "f1a2b3c4d5e6f789"
+            ]
+        ]
+    },
+    {
+        "id": "f1a2b3c4d5e6f789",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "filter sensor topics",
+        "func": "var topic = msg.topic || \"\";\nvar parts = topic.split(\"/\");\n\nif (parts.length !== 3 || parts[0] !== \"SmartHome\") {\n    return null;\n}\nif (parts[1] === \"thresholds\" || parts[2].endsWith(\"Act\")) {\n    return null;\n}\n\nvar val = parseInt(msg.payload, 10);\nif (isNaN(val)) {\n    return null;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 140,
+        "wires": [
+            [
                 "c2130bd3f3cf3f1b"
             ]
         ]
@@ -236,7 +256,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "parseData",
-        "func": "var topic_split = msg.topic.split(\"/\");\n// topic= {Network,Room,SensType}\n\n\nlet val = parseInt(msg.payload);\n\nmsg.payload = {\n    room: topic_split[1],\n    sensorType: topic_split[2],\n    value: val  \n};\n\n\nreturn msg;\n",
+        "func": "var topic_split = msg.topic.split(\"/\");\nvar val = parseInt(msg.payload, 10);\n\nif (isNaN(val)) {\n    return null;\n}\n\nmsg.payload = {\n    room: topic_split[1],\n    sensorType: topic_split[2],\n    value: val\n};\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -313,7 +333,7 @@
         "type": "function",
         "z": "76e4921e87a05a32",
         "name": "thresholds check",
-        "func": "var value = msg.payload.value;\nvar room = msg.payload.room;\nvar sensorType = msg.payload.sensorType;\nvar t_globalName = room + \"_\" + sensorType;\nif(value > global.get(t_globalName)){\n    return msg;\n}\n    \n\n",
+        "func": "var value = msg.payload.value;\nvar room = msg.payload.room;\nvar sensorType = msg.payload.sensorType;\nvar t_globalName = room + \"_\" + sensorType;\nvar threshold = parseFloat(global.get(t_globalName));\n\nif (isNaN(threshold)) {\n    return null;\n}\nif (value > threshold) {\n    return msg;\n}\n\nreturn null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -371,7 +391,7 @@
         "type": "function",
         "z": "aabb6b52ef1c11bc",
         "name": "set threshold",
-        "func": "var threshold_value = msg.payload\nvar topic = msg.topic;\n\n// e.g. arr = [SmartHome,thresholds,livingroom,light]\nvar arr = topic.split(\"/\");\n\n\n// e.g. t_global= \"livingroom_light\"\nvar t_global = arr[2]+ \"_\" +arr[3]; \nglobal.set(t_global,threshold_value);\n\nmsg.payload = \"threshold [\"+ t_global +\"] set to:\" + threshold_value;\nreturn msg;",
+        "func": "var threshold_value = parseFloat(msg.payload);\nvar topic = msg.topic;\nvar arr = topic.split(\"/\");\n\nif (arr.length !== 4 || isNaN(threshold_value)) {\n    return null;\n}\n\nvar t_global = arr[2] + \"_\" + arr[3];\nglobal.set(t_global, threshold_value);\n\nmsg.payload = \"threshold [\" + t_global + \"] set to: \" + threshold_value;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
