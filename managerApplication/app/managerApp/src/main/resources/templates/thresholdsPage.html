@@ -260,6 +260,20 @@
       box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
     }
 
+    .panel {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel input[type="text"],
+    .panel input[type="number"] {
+      width: 100%;
+      text-align: left;
+    }
+
     .footer-text {
       margin-top: 24px;
       text-align: center;
@@ -357,6 +371,55 @@
           <button type="submit">💾 Save Changes</button>
         </div>
       </form>
+
+      <!--
+      <div class="panel">
+        <h2 style="color:#f1f5f9;font-size:16px;font-weight:600;">Sensor status</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Room</th>
+                <th>Sensor</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="sensor : ${sensors}">
+                <td th:text="${sensor.room}"></td>
+                <td th:text="${sensor.sensorType}"></td>
+                <td>
+                  <span th:text="${sensor.health}" style="padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.06);"></span>
+                </td>
+                <td>
+                  <form th:action="@{/sensorEnabled}" method="post" style="display:flex;gap:8px;justify-content:flex-end;">
+                    <input type="hidden" name="room" th:value="${sensor.room}" />
+                    <input type="hidden" name="sensorType" th:value="${sensor.sensorType}" />
+                    <input type="hidden" name="enabled" th:value="${!sensor.enabled}" />
+                    <button type="submit" th:text="${sensor.enabled ? 'Off' : 'On'}"></button>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      -->
+
+      <!--
+      <form th:action="@{/addSensor}" method="post" class="panel">
+        <h2 style="color:#f1f5f9;font-size:16px;font-weight:600;">Add sensor</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr 120px;gap:12px;">
+          <input type="text" name="room" placeholder="room" value="bedroom" />
+          <input type="text" name="sensorType" placeholder="sensorType" value="humidity" />
+          <input type="number" name="value" placeholder="value" value="30" />
+        </div>
+        <div class="btn-group" style="margin-top:0;">
+          <button type="submit">➕ Add Sensor</button>
+        </div>
+      </form>
+      -->
 
       <div class="footer-text">SmartHome Manager v1.0</div>
     </div>

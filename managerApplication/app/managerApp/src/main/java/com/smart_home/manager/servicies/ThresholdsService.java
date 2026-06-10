@@ -13,6 +13,8 @@ public interface ThresholdsService {
 
   List<Threshold> updateThresholds(List<Threshold> thresholds) throws IOException;
 
+  List<Threshold> addThreshold(Threshold threshold) throws IOException;
+
   @Scheduled(fixedRate = 5000)
   void publishThresholdsMQTT();
 }

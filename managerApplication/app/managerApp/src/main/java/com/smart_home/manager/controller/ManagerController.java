@@ -23,7 +23,6 @@ public class ManagerController {
 
   @GetMapping("/")
   public String showThresholds(Model model) {
-    System.out.println("[SERVER] page asked");
     List<Threshold> thresholds;
     try {
       thresholds = thresholdsService.getThresholds();
@@ -52,6 +51,18 @@ public class ManagerController {
     model.addAttribute("message", "Thresholds updated!");
     model.addAttribute("thresholds", thresholds);
 
+    return "thresholdsPage";
+  }
+
+  @PostMapping("/addSensor")
+  public String addSensor(@ModelAttribute Threshold threshold, Model model) {
+    try {
+      List<Threshold> thresholds = thresholdsService.addThreshold(threshold);
+      model.addAttribute("message", "Sensor added!");
+      model.addAttribute("thresholds", thresholds);
+    } catch (IOException e) {
+      model.addAttribute("message", "INTERNAL ERROR");
+    }
     return "thresholdsPage";
   }
 }

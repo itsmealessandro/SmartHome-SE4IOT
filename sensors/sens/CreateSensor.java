@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class CreateSensor {
 
@@ -53,6 +56,7 @@ public class CreateSensor {
       Thread.sleep(2000);
 
       Random random = new Random();
+      Set<String> knownSensors = new HashSet<>();
 
       while (active) {
         // NOTE: JSON
@@ -76,19 +80,22 @@ public class CreateSensor {
 
         JsonNode room = rootNode.get(splittedTopic[1]);
         if (room == null) {
-          System.out.println("Room not found in env.json: " + splittedTopic[1]);
           try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
           continue;
         }
 
         JsonNode sensorNode = room.get(splittedTopic[2]);
         if (sensorNode == null) {
-          System.out.println("Sensor not found in env.json: " + splittedTopic[2]);
           try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
           continue;
         }
 
-        int value = sensorNode.asInt();
+        if (sensorNode.isObject() && sensorNode.has("enabled") && !sensorNode.path("enabled").asBoolean(true)) {
+          try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+          continue;
+        }
+
+        int value = sensorNode.isObject() ? sensorNode.path("value").asInt(0) : sensorNode.asInt();
 
         int noise = random.nextInt(-3, 4);
         int noisyValue = value + noise;
@@ -112,6 +119,11 @@ public class CreateSensor {
         // System.out.println("Publishing message: " + content);
         message.setQos(qos);
         sampleClient.publish(topic, message);
+
+        if (knownSensors.add(topic)) {
+          System.out.println(ANSI_GREEN + "Sensor now active: " + topic + ANSI_RESET);
+        }
+
         // System.out.println("Message published");
 
       }

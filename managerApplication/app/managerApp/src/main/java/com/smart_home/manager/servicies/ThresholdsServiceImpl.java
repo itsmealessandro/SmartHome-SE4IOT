@@ -3,6 +3,7 @@ package com.smart_home.manager.servicies;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.smart_home.manager.model.Threshold;
 
 @Service
@@ -86,6 +88,45 @@ public class ThresholdsServiceImpl implements ThresholdsService {
     }
 
     return thresholds;
+  }
+
+  @Override
+  public List<Threshold> addThreshold(Threshold threshold) throws IOException {
+    threshold.setRoom(threshold.getRoom().trim().toLowerCase());
+    threshold.setSensorType(threshold.getSensorType().trim().toLowerCase());
+    List<Threshold> thresholds = new ArrayList<>(getThresholds());
+    if (!thresholds.contains(threshold)) {
+      thresholds.add(threshold);
+    }
+    updateThresholds(thresholds);
+    updateEnvValue(threshold);
+    publishBootstrapReading(threshold);
+    return thresholds;
+  }
+
+  private void updateEnvValue(Threshold threshold) throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    File file = new File("/simulated_env/env.json");
+    ObjectNode root = (ObjectNode) mapper.readTree(file);
+    ObjectNode room = root.with(threshold.getRoom());
+    room.put(threshold.getSensorType(), Math.round(threshold.getValue()));
+    mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
+  }
+
+  private void publishBootstrapReading(Threshold threshold) {
+    try {
+      if (!isConnected || !MQTT_CLIENT.isConnected()) {
+        MQTT_CLIENT.connect(CONN_OPT);
+        isConnected = true;
+      }
+      String topic = "SmartHome/" + threshold.getRoom() + "/" + threshold.getSensorType();
+      MqttMessage message = new MqttMessage(String.valueOf(threshold.getValue()).getBytes());
+      message.setQos(QOS);
+      MQTT_CLIENT.publish(topic, message);
+      System.out.println("[MQTT] Bootstrap sensor published to " + topic);
+    } catch (MqttException e) {
+      System.out.println("[MQTT] Bootstrap publish failed: " + e.getMessage());
+    }
   }
 
   @Override
