@@ -345,9 +345,48 @@
         "wires": [
             [
                 "369060609f013492",
-                "dcbb368b732d51ec"
+                "dcbb368b732d51ec",
+                "a1b2c3d4e5f67890"
             ]
         ]
+    },
+    {
+        "id": "a1b2c3d4e5f67890",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "actuator command",
+        "func": "var room = msg.payload.room;\nvar sensorType = msg.payload.sensorType;\nvar command;\n\nif (sensorType === \"light\") {\n    command = \"0\";\n} else if (sensorType === \"temperature\") {\n    command = \"20\";\n} else {\n    return null;\n}\n\nvar key = room + \"_\" + sensorType;\nvar now = Date.now();\nvar last = flow.get(\"lastAct_\" + key) || 0;\nif (now - last < 5000) {\n    return null;\n}\nflow.set(\"lastAct_\" + key, now);\n\nmsg.topic = \"SmartHome/\" + room + \"/\" + sensorType + \"Act\";\nmsg.payload = command;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 300,
+        "wires": [
+            [
+                "b2c3d4e5f6a78901"
+            ]
+        ]
+    },
+    {
+        "id": "b2c3d4e5f6a78901",
+        "type": "mqtt out",
+        "z": "76e4921e87a05a32",
+        "name": "actuator out",
+        "topic": "",
+        "qos": "1",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "mqttBroker",
+        "x": 720,
+        "y": 300,
+        "wires": []
     },
     {
         "id": "dcbb368b732d51ec",
