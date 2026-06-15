@@ -347,7 +347,8 @@
                 "369060609f013492",
                 "dcbb368b732d51ec",
                 "a1b2c3d4e5f67890",
-                "735fc2299ee24c95"
+                "735fc2299ee24c95",
+                "f89eacaa841e46a8"
             ]
         ]
     },
@@ -524,6 +525,44 @@
     },
     {
         "id": "b9c4b9efd16a4ab1",
+        "type": "mqtt out",
+        "z": "76e4921e87a05a32",
+        "name": "publish alert",
+        "topic": "",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "mqttBroker",
+        "x": 710,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "f89eacaa841e46a8",
+        "type": "function",
+        "z": "76e4921e87a05a32",
+        "name": "format alert mqtt",
+        "func": "var d = new Date();\nmsg.topic = 'SmartHome/alerts/' + msg.payload.room + '/' + msg.payload.sensorType;\nmsg.payload = 'Exceeded threshold at ' + d.toLocaleTimeString();\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 280,
+        "wires": [
+            [
+                "a5398eee63f64c2a"
+            ]
+        ]
+    },
+    {
+        "id": "a5398eee63f64c2a",
         "type": "mqtt out",
         "z": "76e4921e87a05a32",
         "name": "publish alert",

@@ -44,103 +44,107 @@ public class CreateSensor {
 
     System.out.println(ANSI_GREEN + "Dynamic sensor activated: " + topic + ANSI_RESET);
 
-    try {
-      MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
-      MqttConnectOptions connOpts = new MqttConnectOptions();
-      connOpts.setCleanSession(true);
-      // System.out.println("------------------------------------------------------------");
-      // System.out.println("Connecting to broker: " + broker);
-      sampleClient.connect(connOpts);
-      // System.out.println("Connected");
-      // System.out.println("------------------------------------------------------------");
-      Thread.sleep(2000);
+    while (active) {
+      try {
+        MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
+        MqttConnectOptions connOpts = new MqttConnectOptions();
+        connOpts.setCleanSession(true);
+        // System.out.println("------------------------------------------------------------");
+        // System.out.println("Connecting to broker: " + broker);
+        sampleClient.connect(connOpts);
+        // System.out.println("Connected");
+        // System.out.println("------------------------------------------------------------");
+        Thread.sleep(2000);
 
-      Random random = new Random();
-      Set<String> knownSensors = new HashSet<>();
+        Random random = new Random();
+        Set<String> knownSensors = new HashSet<>();
 
-      while (active) {
-        // NOTE: JSON
+        while (active) {
+          // NOTE: JSON
 
-        ObjectMapper objectMapper = new ObjectMapper();
+          ObjectMapper objectMapper = new ObjectMapper();
 
-        File jsonFile = new File("/simulated_env/env.json");
-        if (!jsonFile.exists()) {
-          System.out.println("Errore: Il file JSON " + jsonFile.getAbsolutePath() + " non esiste.");
-          return;
+          File jsonFile = new File("/simulated_env/env.json");
+          if (!jsonFile.exists()) {
+            System.out.println("Errore: Il file JSON " + jsonFile.getAbsolutePath() + " non esiste.");
+            return;
+          }
+
+          String[] splittedTopic = topic.split("/");
+
+          JsonNode rootNode;
+          try (RandomAccessFile raf = new RandomAccessFile(jsonFile, "r");
+              FileChannel channel = raf.getChannel();
+              FileLock lock = channel.lock(0, Long.MAX_VALUE, true)) {
+            rootNode = objectMapper.readTree(jsonFile);
+          }
+
+          JsonNode room = rootNode.get(splittedTopic[1]);
+          if (room == null) {
+            try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+            continue;
+          }
+
+          JsonNode sensorNode = room.get(splittedTopic[2]);
+          if (sensorNode == null) {
+            try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+            continue;
+          }
+
+          if (sensorNode.isObject() && sensorNode.has("enabled") && !sensorNode.path("enabled").asBoolean(true)) {
+            try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+            continue;
+          }
+
+          int value = sensorNode.isObject() ? sensorNode.path("value").asInt(0) : sensorNode.asInt();
+
+          int noise = random.nextInt(-3, 4);
+          int noisyValue = value + noise;
+          if (noisyValue < 0) noisyValue = 0;
+
+          String content = null;
+          int alertProb = random.nextInt(0, 100);
+          if (alertProb <= 1) {
+
+            System.out.println(ANSI_RED + " ALERT VALUE sensor:" + args[0]);
+            content = String.valueOf(random.nextInt(6, 10));
+
+          } else {
+            content = String.valueOf(noisyValue);
+          }
+
+          Thread.sleep(500);
+
+          MqttMessage message = new MqttMessage(content.getBytes());
+
+          // System.out.println("Publishing message: " + content);
+          message.setQos(qos);
+          sampleClient.publish(topic, message);
+
+          if (knownSensors.add(topic)) {
+            System.out.println(ANSI_GREEN + "Sensor now active: " + topic + ANSI_RESET);
+          }
+
+          // System.out.println("Message published");
+
         }
 
-        String[] splittedTopic = topic.split("/");
-
-        JsonNode rootNode;
-        try (RandomAccessFile raf = new RandomAccessFile(jsonFile, "r");
-            FileChannel channel = raf.getChannel();
-            FileLock lock = channel.lock(0, Long.MAX_VALUE, true)) {
-          rootNode = objectMapper.readTree(jsonFile);
-        }
-
-        JsonNode room = rootNode.get(splittedTopic[1]);
-        if (room == null) {
-          try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
-          continue;
-        }
-
-        JsonNode sensorNode = room.get(splittedTopic[2]);
-        if (sensorNode == null) {
-          try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
-          continue;
-        }
-
-        if (sensorNode.isObject() && sensorNode.has("enabled") && !sensorNode.path("enabled").asBoolean(true)) {
-          try { Thread.sleep(1000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
-          continue;
-        }
-
-        int value = sensorNode.isObject() ? sensorNode.path("value").asInt(0) : sensorNode.asInt();
-
-        int noise = random.nextInt(-3, 4);
-        int noisyValue = value + noise;
-        if (noisyValue < 0) noisyValue = 0;
-
-        String content = null;
-        int alertProb = random.nextInt(0, 100);
-        if (alertProb <= 1) {
-
-          System.out.println(ANSI_RED + " ALERT VALUE sensor:" + args[0]);
-          content = String.valueOf(random.nextInt(6, 10));
-
-        } else {
-          content = String.valueOf(noisyValue);
-        }
-
-        Thread.sleep(500);
-
-        MqttMessage message = new MqttMessage(content.getBytes());
-
-        // System.out.println("Publishing message: " + content);
-        message.setQos(qos);
-        sampleClient.publish(topic, message);
-
-        if (knownSensors.add(topic)) {
-          System.out.println(ANSI_GREEN + "Sensor now active: " + topic + ANSI_RESET);
-        }
-
-        // System.out.println("Message published");
-
+        // Disconnecting
+        // System.out.println("------------------------------------------------------------");
+        sampleClient.disconnect();
+        // System.out.println("Disconnected");
+        System.exit(0);
+      } catch (MqttException me) {
+        // System.out.println("reason " + me.getReasonCode());
+        // System.out.println("msg " + me.getMessage());
+        // System.out.println("loc " + me.getLocalizedMessage());
+        // System.out.println("cause " + me.getCause());
+        // System.out.println("excep " + me);
+        // me.printStackTrace();
+        System.out.println(ANSI_RED + "MQTT connection lost for " + topic + ". Reconnecting in 5 seconds..." + ANSI_RESET);
+        try { Thread.sleep(5000); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
       }
-
-      // Disconnecting
-      // System.out.println("------------------------------------------------------------");
-      sampleClient.disconnect();
-      // System.out.println("Disconnected");
-      System.exit(0);
-    } catch (MqttException me) {
-      // System.out.println("reason " + me.getReasonCode());
-      // System.out.println("msg " + me.getMessage());
-      // System.out.println("loc " + me.getLocalizedMessage());
-      // System.out.println("cause " + me.getCause());
-      // System.out.println("excep " + me);
-      me.printStackTrace();
-      System.exit(1);
+    }  System.exit(1);
     } catch (InterruptedException | IOException e) {
       // System.out.println("time exeption");
       e.printStackTrace();
