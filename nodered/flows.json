@@ -441,9 +441,48 @@
         "y": 260,
         "wires": [
             [
-                "cbb5b3db72e75f8d"
+                "cbb5b3db72e75f8d",
+                "f1a2b3c4d5e6f701"
             ]
         ]
+    },
+    {
+        "id": "f1a2b3c4d5e6f701",
+        "type": "function",
+        "z": "aabb6b52ef1c11bc",
+        "name": "threshold into influx",
+        "func": "var threshold_value = parseFloat(msg.payload);\nvar topic = msg.topic;\nvar arr = topic.split(\"/\");\n\nif (arr.length !== 4 || isNaN(threshold_value)) {\n    return null;\n}\n\nmsg.measurement = \"thresholds\";\nmsg.tags = {\n    room: arr[2],\n    sensorType: arr[3]\n};\nmsg.fields = { value: threshold_value };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 320,
+        "wires": [
+            [
+                "9a8b7c6d5e4f3021"
+            ]
+        ]
+    },
+    {
+        "id": "9a8b7c6d5e4f3021",
+        "type": "influxdb out",
+        "z": "aabb6b52ef1c11bc",
+        "influxdb": "7e2934393ac03b0c",
+        "name": "thresholds influx",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "univaq",
+        "bucket": "smart_home_iot",
+        "x": 610,
+        "y": 320,
+        "wires": []
     },
     {
         "id": "cbb5b3db72e75f8d",

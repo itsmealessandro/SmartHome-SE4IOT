@@ -36,12 +36,73 @@
       "targets": [
         {
           "datasource": { "type": "influxdb", "uid": "influxdb-univaq" },
-          "query": "from(bucket: \"smart_home_iot\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"room\"] =~ /^${room:regex}$/)\n  |> filter(fn: (r) => r[\"sensorType\"] =~ /^${sensorType:regex}$/)\n  |> filter(fn: (r) => r[\"_measurement\"] =~ /^${measurement:regex}$/)\n  |> group(columns: [\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+          "query": "from(bucket: \"smart_home_iot\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"_measurement\"] =~ /^${measurement:regex}$/)\n  |> group(columns: [\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
           "refId": "A"
         }
       ],
       "title": "Smart Home IoT",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "influxdb-univaq"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 2,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "min",
+            "lastNotNull",
+            "max"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.4.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "influxdb-univaq"
+          },
+          "query": "from(bucket: \"smart_home_iot\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"_measurement\"] =~ /^${measurement:regex}$/)",
+          "refId": "A"
+        }
+      ],
+      "title": "Selected Sensors (Min / Current / Max)",
+      "type": "gauge"
     }
   ],
   "refresh": "5s",
@@ -69,55 +130,7 @@
         "options": [],
         "query": "import \"influxdata/influxdb/schema\"\nschema.measurements(bucket: \"smart_home_iot\")",
         "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": {
-          "type": "influxdb",
-          "uid": "influxdb-univaq"
-        },
-        "definition": "",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Room",
-        "multi": true,
-        "name": "room",
-        "options": [],
-        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"smart_home_iot\", tag: \"room\")",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": {
-          "type": "influxdb",
-          "uid": "influxdb-univaq"
-        },
-        "definition": "",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Sensor",
-        "multi": true,
-        "name": "sensorType",
-        "options": [],
-        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"smart_home_iot\", tag: \"sensorType\")",
-        "refresh": 1,
-        "regex": "",
+        "regex": "/^(?!thresholds[-_]bedroom$|threesholds[-_ ]livingroom$|thresholds[-_ ]livingroom$|bedroom[-_ ]Humidity$|Bedroom[-_ ]Humidity$)(.+)$/",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"

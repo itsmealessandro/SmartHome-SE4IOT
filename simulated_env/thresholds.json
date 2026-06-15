@@ -14,4 +14,16 @@
   "room" : "bedroom",
   "sensorType" : "temperature",
   "value" : 25.0
+}, {
+  "room" : "bedroom",
+  "sensorType" : "humidity",
+  "value" : 30.0
+}, {
+  "room" : "livingroom",
+  "sensorType" : "humidity",
+  "value" : 45.0
+}, {
+  "room" : "bedroom",
+  "sensorType" : "co2",
+  "value" : 20.0
 } ]
