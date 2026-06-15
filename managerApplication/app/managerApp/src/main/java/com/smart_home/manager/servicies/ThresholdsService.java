@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.smart_home.manager.model.Sensor;
 import com.smart_home.manager.model.Threshold;
 
 public interface ThresholdsService {
@@ -14,6 +15,10 @@ public interface ThresholdsService {
   List<Threshold> updateThresholds(List<Threshold> thresholds) throws IOException;
 
   List<Threshold> addThreshold(Threshold threshold) throws IOException;
+
+  List<Sensor> getSensors() throws IOException;
+
+  void toggleSensorStatus(String room, String sensorType, boolean enabled) throws IOException;
 
   @Scheduled(fixedRate = 5000)
   void publishThresholdsMQTT();

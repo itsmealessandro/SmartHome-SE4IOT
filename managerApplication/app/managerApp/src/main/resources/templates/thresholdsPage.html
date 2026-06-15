@@ -75,9 +75,6 @@
     }
 
     .message-box {
-      background: rgba(34, 197, 94, 0.1);
-      border: 1px solid rgba(34, 197, 94, 0.2);
-      color: #4ade80;
       padding: 14px 18px;
       border-radius: 12px;
       margin-bottom: 28px;
@@ -89,7 +86,13 @@
       animation: slideDown 0.3s ease-out;
     }
 
-    .message-box::before {
+    .message-box.success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+    }
+
+    .message-box.success::before {
       content: "✓";
       display: inline-flex;
       align-items: center;
@@ -97,6 +100,26 @@
       width: 22px;
       height: 22px;
       background: rgba(34, 197, 94, 0.2);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .message-box.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    .message-box.error::before {
+      content: "✕";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      background: rgba(239, 68, 68, 0.2);
       border-radius: 50%;
       font-size: 12px;
       font-weight: 700;
@@ -196,8 +219,8 @@
       gap: 8px;
     }
 
-    input[type="number"] {
-      width: 90px;
+    input[type="number"],
+    input[type="text"] {
       padding: 10px 14px;
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -206,12 +229,17 @@
       font-size: 14px;
       font-weight: 500;
       font-family: inherit;
-      text-align: center;
       transition: all 0.2s ease;
       outline: none;
     }
 
-    input[type="number"]:focus {
+    input[type="number"] {
+      width: 90px;
+      text-align: center;
+    }
+
+    input[type="number"]:focus,
+    input[type="text"]:focus {
       border-color: #3b82f6;
       background: rgba(59, 130, 246, 0.08);
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
@@ -221,7 +249,8 @@
       opacity: 0.5;
     }
 
-    input[type="number"]:hover {
+    input[type="number"]:hover,
+    input[type="text"]:hover {
       border-color: rgba(255, 255, 255, 0.2);
     }
 
@@ -260,18 +289,186 @@
       box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
     }
 
+    .sensor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+      margin-bottom: 24px;
+    }
+
+    .sensor-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sensor-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+      transition: all 0.3s ease;
+    }
+
+    .sensor-card.active-card::before {
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    }
+
+    .sensor-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.4);
+    }
+
+    .sensor-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .sensor-card-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sensor-card-room {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sensor-card-type {
+      font-size: 17px;
+      font-weight: 600;
+      color: #f1f5f9;
+      text-transform: capitalize;
+      margin-top: 2px;
+    }
+
+    .sensor-card-icon {
+      font-size: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sensor-card-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .status-indicator.active {
+      background-color: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+
+    .status-indicator.inactive {
+      background-color: #ef4444;
+      box-shadow: 0 0 6px #ef4444;
+    }
+
+    .status-text {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-text.active {
+      color: #34d399;
+    }
+
+    .status-text.inactive {
+      color: #f87171;
+    }
+
+    .sensor-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      transition: .3s;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #94a3b8;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+      background-color: #3b82f6;
+    }
+
     .panel {
       margin-top: 24px;
       padding-top: 24px;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
-      display: grid;
-      gap: 12px;
-    }
-
-    .panel input[type="text"],
-    .panel input[type="number"] {
-      width: 100%;
-      text-align: left;
     }
 
     .footer-text {
@@ -334,7 +531,7 @@
         </div>
       </div>
 
-      <div class="message-box" th:if="${message}" th:text="${message}"></div>
+      <div th:if="${message}" th:class="'message-box ' + (${messageType} ?: 'success')" th:text="${message}"></div>
 
       <form th:action="@{/changeThresholds}" method="post">
         <div class="table-wrapper">
@@ -372,42 +569,46 @@
         </div>
       </form>
 
-      <!--
-      <div class="panel">
-        <h2 style="color:#f1f5f9;font-size:16px;font-weight:600;">Sensor status</h2>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Room</th>
-                <th>Sensor</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="sensor : ${sensors}">
-                <td th:text="${sensor.room}"></td>
-                <td th:text="${sensor.sensorType}"></td>
-                <td>
-                  <span th:text="${sensor.health}" style="padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.06);"></span>
-                </td>
-                <td>
-                  <form th:action="@{/sensorEnabled}" method="post" style="display:flex;gap:8px;justify-content:flex-end;">
-                    <input type="hidden" name="room" th:value="${sensor.room}" />
-                    <input type="hidden" name="sensorType" th:value="${sensor.sensorType}" />
-                    <input type="hidden" name="enabled" th:value="${!sensor.enabled}" />
-                    <button type="submit" th:text="${sensor.enabled ? 'Off' : 'On'}"></button>
-                  </form>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="panel" style="border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h2 style="color:#f1f5f9;font-size:16px;font-weight:600;margin:0;">Sensor Health Dashboard</h2>
+          <span style="font-size: 13px; color: #94a3b8;" th:text="${sensors.size() + ' Active Sensors'}"></span>
+        </div>
+        
+        <div class="sensor-grid">
+          <div th:each="sensor : ${sensors}" th:class="'sensor-card ' + (${sensor.enabled} ? 'active-card' : '')">
+            <div class="sensor-card-header">
+              <div class="sensor-card-info">
+                <span class="sensor-card-room" th:text="${sensor.room}"></span>
+                <span class="sensor-card-type" th:text="${sensor.sensorType}"></span>
+              </div>
+              <div class="sensor-card-icon" th:text="${sensor.sensorType.toLowerCase().contains('temp') ? '🌡️' : 
+                                                    (sensor.sensorType.toLowerCase().contains('light') ? '💡' : 
+                                                     (sensor.sensorType.toLowerCase().contains('humid') ? '💧' : '🔌'))}">
+              </div>
+            </div>
+            
+            <div class="sensor-card-footer">
+              <div class="sensor-card-status">
+                <span th:class="'status-indicator ' + (${sensor.enabled} ? 'active' : 'inactive')"></span>
+                <span th:class="'status-text ' + (${sensor.enabled} ? 'active' : 'inactive')" 
+                      th:text="${sensor.enabled ? 'Online / Good' : 'Offline'}"></span>
+              </div>
+              
+              <form th:action="@{/sensorEnabled}" method="post" style="margin:0;">
+                <input type="hidden" name="room" th:value="${sensor.room}" />
+                <input type="hidden" name="sensorType" th:value="${sensor.sensorType}" />
+                <input type="hidden" name="enabled" th:value="${!sensor.enabled}" />
+                <label class="switch">
+                  <input type="checkbox" th:checked="${sensor.enabled}" onchange="this.form.submit()" />
+                  <span class="slider"></span>
+                </label>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-      -->
 
-      <!--
       <form th:action="@{/addSensor}" method="post" class="panel">
         <h2 style="color:#f1f5f9;font-size:16px;font-weight:600;">Add sensor</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr 120px;gap:12px;">
@@ -419,7 +620,6 @@
           <button type="submit">➕ Add Sensor</button>
         </div>
       </form>
-      -->
 
       <div class="footer-text">SmartHome Manager v1.0</div>
     </div>
