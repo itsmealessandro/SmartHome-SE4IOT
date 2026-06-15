@@ -517,6 +517,101 @@
         justify-content: center;
       }
     }
+
+    .alert-history-btn {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s ease;
+    }
+    
+    .alert-history-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.show .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .modal-title {
+      color: #f1f5f9;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .alert-list {
+      max-height: 300px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .alert-item {
+      background: rgba(239, 68, 68, 0.05);
+      border-left: 3px solid #ef4444;
+      padding: 10px 14px;
+      border-radius: 6px;
+      color: #e2e8f0;
+      font-size: 13px;
+    }
   </style>
 </head>
 
@@ -581,12 +676,22 @@
               <div class="sensor-card-info">
                 <span class="sensor-card-room" th:text="${sensor.room}"></span>
                 <span class="sensor-card-type" th:text="${sensor.sensorType}"></span>
+                <div th:if="${sensor.actuatorName != null}" style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+                  <span style="font-size: 11px; background: rgba(52, 211, 153, 0.15); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: 600;" th:text="'⚙ ' + ${sensor.actuatorName}"></span>
+                  <span style="font-size: 11px; color: #94a3b8;" th:text="${sensor.actuatorStatus}"></span>
+                </div>
               </div>
               <div class="sensor-card-icon" th:text="${sensor.sensorType.toLowerCase().contains('temp') ? '🌡️' : 
                                                     (sensor.sensorType.toLowerCase().contains('light') ? '💡' : 
                                                      (sensor.sensorType.toLowerCase().contains('humid') ? '💧' : '🔌'))}">
               </div>
             </div>
+            
+            <button th:if="${sensor.alertHistory != null and !sensor.alertHistory.isEmpty()}" 
+                    class="alert-history-btn"
+                    th:attr="data-room=${sensor.room}, data-sensor=${sensor.sensorType}, data-alerts=${#strings.listJoin(sensor.alertHistory, '|')}">
+              ⚠ View Alert History (<span th:text="${sensor.alertHistory.size()}"></span>)
+            </button>
             
             <div class="sensor-card-footer">
               <div class="sensor-card-status">
@@ -624,6 +729,58 @@
       <div class="footer-text">SmartHome Manager v1.0</div>
     </div>
   </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="alertModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Alert History</div>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="alert-list" id="modalAlertList">
+        <!-- Alerts will be injected here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('alertModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalAlertList = document.getElementById('modalAlertList');
+
+    document.querySelectorAll('.alert-history-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const room = btn.getAttribute('data-room');
+        const sensor = btn.getAttribute('data-sensor');
+        const alertsStr = btn.getAttribute('data-alerts');
+        
+        modalTitle.textContent = `Alert History: ${room} / ${sensor}`;
+        modalAlertList.innerHTML = '';
+        
+        if (alertsStr) {
+          const alerts = alertsStr.split('|');
+          alerts.forEach(alert => {
+            const div = document.createElement('div');
+            div.className = 'alert-item';
+            div.textContent = alert;
+            modalAlertList.appendChild(div);
+          });
+        }
+        
+        modal.classList.add('show');
+      });
+    });
+
+    function closeModal() {
+      modal.classList.remove('show');
+    }
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+  </script>
 </body>
 
 </html>
