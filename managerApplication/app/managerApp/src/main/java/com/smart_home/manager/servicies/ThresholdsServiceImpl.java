@@ -33,6 +33,9 @@ public class ThresholdsServiceImpl implements ThresholdsService {
 
   private volatile boolean isConnected = false;
 
+  File thresholdsFile = new File("/simulated_env/thresholds.json");
+  File envFile = new File("/simulated_env/env.json");
+
   // setup thresholds info
   public ThresholdsServiceImpl() {
 
@@ -57,10 +60,8 @@ public class ThresholdsServiceImpl implements ThresholdsService {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    File file = new File("/simulated_env/thresholds.json");
-
     List<Threshold> thresholds = mapper.readValue(
-        file,
+        thresholdsFile,
         mapper.getTypeFactory().constructCollectionType(List.class, Threshold.class));
 
     // Stampa i valori
@@ -77,9 +78,7 @@ public class ThresholdsServiceImpl implements ThresholdsService {
   public List<Threshold> updateThresholds(List<Threshold> thresholds) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
 
-    File file = new File("/simulated_env/thresholds.json");
-
-    mapper.writerWithDefaultPrettyPrinter().writeValue(file, thresholds);
+    mapper.writerWithDefaultPrettyPrinter().writeValue(thresholdsFile, thresholds);
 
     System.out.println("[SERVER] Thresholds aggiornati:");
     for (Threshold threshold : thresholds) {
@@ -108,8 +107,7 @@ public class ThresholdsServiceImpl implements ThresholdsService {
 
   private void updateEnvValue(Threshold threshold) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
-    File file = new File("/simulated_env/env.json");
-    ObjectNode root = (ObjectNode) mapper.readTree(file);
+    ObjectNode root = (ObjectNode) mapper.readTree(envFile);
     ObjectNode room = root.with(threshold.getRoom());
     com.fasterxml.jackson.databind.JsonNode sensorNode = room.get(threshold.getSensorType());
     if (sensorNode != null && sensorNode.isObject()) {
@@ -120,7 +118,7 @@ public class ThresholdsServiceImpl implements ThresholdsService {
         newNode.put("enabled", true);
         room.set(threshold.getSensorType(), newNode);
     }
-    mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
+    mapper.writerWithDefaultPrettyPrinter().writeValue(envFile, root);
   }
 
   private void publishBootstrapReading(Threshold threshold) {
@@ -149,25 +147,6 @@ public class ThresholdsServiceImpl implements ThresholdsService {
         MQTT_CLIENT.connect(CONN_OPT);
         isConnected = true;
         System.out.println("[MQTT] Connected successfully");
-        MQTT_CLIENT.setCallback(new org.eclipse.paho.client.mqttv3.MqttCallback() {
-            @Override
-            public void connectionLost(Throwable cause) { isConnected = false; }
-            @Override
-            public void messageArrived(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) throws Exception {
-                if (topic.startsWith("SmartHome/alerts/")) {
-                    String[] parts = topic.split("/");
-                    if (parts.length == 4) {
-                        String room = parts[2];
-                        String sensorType = parts[3];
-                        String alertMsg = new String(message.getPayload());
-                        updateSensorAlert(room, sensorType, alertMsg);
-                    }
-                }
-            }
-            @Override
-            public void deliveryComplete(org.eclipse.paho.client.mqttv3.IMqttDeliveryToken token) {}
-        });
-        MQTT_CLIENT.subscribe("SmartHome/alerts/#");
       }
 
       List<Threshold> thresholds = getThresholds();
@@ -200,8 +179,7 @@ public class ThresholdsServiceImpl implements ThresholdsService {
   @Override
   public List<Sensor> getSensors() throws IOException {
     ObjectMapper mapper = new ObjectMapper();
-    File file = new File("/simulated_env/env.json");
-    com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(file);
+    com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(envFile);
     List<Sensor> sensors = new ArrayList<>();
 
     if (root != null && root.isObject()) {
@@ -219,63 +197,12 @@ public class ThresholdsServiceImpl implements ThresholdsService {
                     com.fasterxml.jackson.databind.JsonNode sensorNode = sensorEntry.getValue();
 
                     boolean enabled = true;
-                    String sensorVal = "0";
-                    if (sensorNode != null) {
-                        if (sensorNode.isObject()) {
-                            if (sensorNode.has("enabled")) {
-                                enabled = sensorNode.get("enabled").asBoolean(true);
-                            }
-                            if (sensorNode.has("value")) {
-                                sensorVal = sensorNode.get("value").asText();
-                            }
-                        } else {
-                            sensorVal = sensorNode.asText();
-                        }
-                    }
-
-                    List<String> alertHistory = new ArrayList<>();
-                    if (sensorNode != null && sensorNode.isObject() && sensorNode.has("alertHistory") && sensorNode.get("alertHistory").isArray()) {
-                        for (com.fasterxml.jackson.databind.JsonNode element : sensorNode.get("alertHistory")) {
-                            alertHistory.add(element.asText());
-                        }
+                    if (sensorNode != null && sensorNode.isObject() && sensorNode.has("enabled")) {
+                        enabled = sensorNode.get("enabled").asBoolean(true);
                     }
 
                     String health = enabled ? "Good" : "Offline";
-                    
-                    boolean isActuatorRunning = false;
-                    if (!alertHistory.isEmpty()) {
-                        String lastLog = alertHistory.get(0);
-                        if (lastLog.contains("Exceeded threshold")) {
-                            isActuatorRunning = true;
-                        }
-                    }
-
-                    String deviceName = "Attuatore Generico";
-                    String activeStatus = "In funzione ⚙️";
-                    String idleStatus = "Standby";
-
-                    if ("temperature".equals(sensorType)) {
-                        deviceName = "Condizionatore";
-                        activeStatus = "Acceso ❄️";
-                        idleStatus = "Spento";
-                    } else if ("light".equals(sensorType)) {
-                        deviceName = "Tapparelle/Luci";
-                        activeStatus = "In funzione 💡";
-                        idleStatus = "Spento";
-                    } else if ("humidity".equals(sensorType)) {
-                        deviceName = "Deumidificatore";
-                        activeStatus = "Acceso 💧";
-                        idleStatus = "Spento";
-                    } else if ("co2".equals(sensorType)) {
-                        deviceName = "Finestre (Smart)";
-                        activeStatus = "Aperte 🌬️";
-                        idleStatus = "Chiuse";
-                    }
-
-                    String actuatorName = deviceName;
-                    String actuatorStatus = !enabled ? "Disabilitato" : (isActuatorRunning ? activeStatus : idleStatus);
-
-                    sensors.add(new Sensor(roomName, sensorType, sensorVal, health, enabled, alertHistory, actuatorName, actuatorStatus));
+                    sensors.add(new Sensor(roomName, sensorType, health, enabled));
                 }
             }
         }
@@ -283,48 +210,12 @@ public class ThresholdsServiceImpl implements ThresholdsService {
     return sensors;
   }
 
-  private void updateSensorAlert(String room, String sensorType, String alertMsg) throws IOException {
-    ObjectMapper mapper = new ObjectMapper();
-    File file = new File("/simulated_env/env.json");
-    if (!file.exists()) return;
-    ObjectNode root = (ObjectNode) mapper.readTree(file);
-    ObjectNode roomNode = (ObjectNode) root.get(room);
-    if (roomNode != null) {
-        com.fasterxml.jackson.databind.JsonNode sensorNode = roomNode.get(sensorType);
-        if (sensorNode != null) {
-            ObjectNode newSensorNode;
-            if (sensorNode.isObject()) {
-                newSensorNode = (ObjectNode) sensorNode;
-            } else {
-                newSensorNode = mapper.createObjectNode();
-                newSensorNode.put("value", sensorNode.asInt(0));
-                newSensorNode.put("enabled", true);
-            }
-            com.fasterxml.jackson.databind.node.ArrayNode historyArray;
-            if (newSensorNode.has("alertHistory") && newSensorNode.get("alertHistory").isArray()) {
-                historyArray = (com.fasterxml.jackson.databind.node.ArrayNode) newSensorNode.get("alertHistory");
-            } else {
-                historyArray = mapper.createArrayNode();
-            }
-            historyArray.insert(0, alertMsg);
-            while (historyArray.size() > 10) {
-                historyArray.remove(historyArray.size() - 1);
-            }
-            newSensorNode.set("alertHistory", historyArray);
-
-            roomNode.set(sensorType, newSensorNode);
-            mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
-        }
-    }
-  }
-
   @Override
   public void toggleSensorStatus(String room, String sensorType, boolean enabled) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
-    File file = new File("/simulated_env/env.json");
-    if (!file.exists()) return;
+    if (!envFile.exists()) return;
 
-    ObjectNode root = (ObjectNode) mapper.readTree(file);
+    ObjectNode root = (ObjectNode) mapper.readTree(envFile);
     ObjectNode roomNode = (ObjectNode) root.get(room);
     if (roomNode != null) {
         com.fasterxml.jackson.databind.JsonNode sensorNode = roomNode.get(sensorType);
@@ -341,7 +232,7 @@ public class ThresholdsServiceImpl implements ThresholdsService {
             newSensorNode.put("enabled", enabled);
 
             roomNode.set(sensorType, newSensorNode);
-            mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(envFile, root);
         }
     }
   }

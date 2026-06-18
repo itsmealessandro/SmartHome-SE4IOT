@@ -27,9 +27,9 @@ public class CreateActuator {
     String topic = args[0];
     String clientId = args[1];
 
-    if (!topic.matches("^SmartHome/[a-zA-Z0-9_+]+/[a-zA-Z0-9_+]+Act$")) {
-      System.out.println("Error: Topic must match pattern SmartHome/<room>/<sensor>Act or use + for wildcards");
-      System.out.println("Example: java CreateActuator SmartHome/+/+Act a1");
+    if (!topic.matches("^SmartHome/[a-zA-Z0-9_]+/[a-zA-Z0-9_]+Act$")) {
+      System.out.println("Error: Topic must match pattern SmartHome/<room>/<sensor>Act");
+      System.out.println("Example: java CreateActuator SmartHome/bedroom/lightAct a1");
       return;
     }
 
@@ -158,27 +158,9 @@ public class CreateActuator {
 
       try {
         int intValue = Integer.parseInt(arrived_msg.trim());
-        ObjectNode newSensorNode;
-        if (sensNode.isObject()) {
-          newSensorNode = (ObjectNode) sensNode;
-        } else {
-          newSensorNode = MAPPER.createObjectNode();
-          newSensorNode.put("enabled", true);
-        }
-        newSensorNode.put("value", intValue);
-        addResolutionToHistory(newSensorNode, String.valueOf(intValue));
-        ((ObjectNode) room).set(textSens, newSensorNode);
+        ((ObjectNode) room).put(textSens, intValue);
       } catch (NumberFormatException e) {
-        ObjectNode newSensorNode;
-        if (sensNode.isObject()) {
-          newSensorNode = (ObjectNode) sensNode;
-        } else {
-          newSensorNode = MAPPER.createObjectNode();
-          newSensorNode.put("enabled", true);
-        }
-        newSensorNode.put("value", arrived_msg);
-        addResolutionToHistory(newSensorNode, arrived_msg);
-        ((ObjectNode) room).set(textSens, newSensorNode);
+        ((ObjectNode) room).put(textSens, arrived_msg);
       }
 
       File tempFile = new File(ENV_PATH + ".tmp");
@@ -191,20 +173,5 @@ public class CreateActuator {
 
       System.out.println(MAPPER.readTree(jsonFile).toPrettyString());
     }
-  }
-
-  private static void addResolutionToHistory(ObjectNode sensNode, String resolvedValue) {
-    String resolvedMsg = "[" + new java.util.Date().toLocaleString() + "] \uD83D\uDEE0\uFE0F Resolved by actuator! Value reset to: " + resolvedValue;
-    com.fasterxml.jackson.databind.node.ArrayNode historyArray;
-    if (sensNode.has("alertHistory") && sensNode.get("alertHistory").isArray()) {
-        historyArray = (com.fasterxml.jackson.databind.node.ArrayNode) sensNode.get("alertHistory");
-    } else {
-        historyArray = MAPPER.createArrayNode();
-    }
-    historyArray.insert(0, resolvedMsg);
-    while (historyArray.size() > 10) {
-        historyArray.remove(historyArray.size() - 1);
-    }
-    sensNode.set("alertHistory", historyArray);
   }
 }

@@ -32,6 +32,7 @@ public class ManagerController {
       e.printStackTrace();
       model.addAttribute("message", "Internal error reading thresholds");
       model.addAttribute("messageType", "error");
+      model.addAttribute("sensors", List.of());
       return "thresholdsPage";
     }
     model.addAttribute("thresholds", thresholds);
@@ -41,6 +42,7 @@ public class ManagerController {
         model.addAttribute("sensors", sensors);
     } catch (IOException e) {
         e.printStackTrace();
+        model.addAttribute("sensors", List.of());
     }
 
     return "thresholdsPage";
