@@ -4,3 +4,13 @@
 /nodered/.config.nodes.json.backup
 /nodered/node_modules/
 /.cursor/rules
+
+# Slides/presentations (only spec and final doc should be in repo)
+ALL_SLIDES.md
+
+# LaTeX build artifacts
+docs/report/material_for_report/*.aux
+docs/report/material_for_report/*.log
+docs/report/material_for_report/*.out
+docs/report/material_for_report/*.toc
+docs/report/material_for_report/IOT_project_doc.pdf
