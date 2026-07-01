@@ -4,6 +4,6 @@
     "version": "0.0.1",
     "private": true,
     "dependencies": {
-        "node-red-contrib-influxdb": "~0.7.0"
+        "node-red-contrib-influxdb": "^0.7.0"
     }
 }

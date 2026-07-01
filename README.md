@@ -45,7 +45,7 @@ Complete IoT stack for a simulated Smart Home: sensors publish MQTT data, Node-R
 
 ## First-time Node-RED setup
 
-On first start, Node-RED installs npm dependencies from `nodered/package.json` (may take a minute).
+Node-RED uses a custom Dockerfile to securely install the InfluxDB plugin during the `docker compose build` phase.
 
 Configure the InfluxDB node credentials in the Node-RED editor if writes fail:
 - URL: `http://influxdb:8086`
@@ -89,5 +89,3 @@ Sensors have a 1% probability of publishing an anomalous "alert value" (random 6
 - Email alerts and motion sensors are not implemented
 - Default credentials in `.env.example` are for local development only
 - The InfluxDB token is hardcoded in `grafana/provisioning/datasources/influxdb.yaml` — change it if you rotate tokens
-- `influxdb/` (custom setup) and `entrypoint.sh` are **legacy** — InfluxDB is now initialized via the official image's `DOCKER_INFLUXDB_INIT_*` env vars
-- `grafana/dockerfile` + `setup_dashboard.py` are **unused** — the compose.yaml uses the standard `grafana/grafana-oss:8.4.3` image with provisioning via volume mounts
