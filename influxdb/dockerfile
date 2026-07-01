@@ -1,8 +1,0 @@
-FROM influxdb:latest
-
-# Copia lo script di inizializzazione e il file di configurazione nella directory del container
-COPY influxdb.conf /etc/influxdb/influxdb.conf
-COPY ./setup_influx.sh /setup_influx.sh
-RUN chmod +x /setup_influx.sh
-
-CMD ["/setup_influx.sh"]
