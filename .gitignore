@@ -14,3 +14,4 @@ docs/report/material_for_report/*.log
 docs/report/material_for_report/*.out
 docs/report/material_for_report/*.toc
 docs/report/material_for_report/IOT_project_doc.pdf
+nodered/.npm/

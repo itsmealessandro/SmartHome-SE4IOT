@@ -22,7 +22,7 @@ services:
     env_file:
       - .env
     container_name: nodered-container
-    image: nodered/node-red:latest
+    build: ./nodered
     hostname: nodeName
     ports:
       - "${NODERED_PORT}:1880"
@@ -32,11 +32,6 @@ services:
       - ./nodered:/data
     depends_on:
       - broker
-    command: >
-      sh -c "
-        cd /data && npm install --no-audit --no-fund &&
-        exec /usr/src/node-red/entrypoint.sh
-      "
 
 
   # --------------------------------------------
